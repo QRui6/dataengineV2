@@ -1,0 +1,10 @@
+dependencies {
+  // 引入需要的依赖
+  implementation(project(":common:base"))
+  implementation(project(":common:cache"))
+  implementation(project(":common:sa-token"))
+  // 引入 spring boot web
+  implementation(libs.spring.boot.starter.web)
+  // 引入 common lang3 依赖
+  api(libs.common.lang3)
+}

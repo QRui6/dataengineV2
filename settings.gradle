@@ -1,0 +1,32 @@
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+    maven { url 'https://repo.spring.io/release' }
+  }
+
+  plugins {
+    id 'org.springframework.boot' version '3.5.3' apply false
+    id 'io.spring.dependency-management' version '1.1.5' apply false
+  }
+}
+
+// 扫描包，并将所有项目进行注册
+fileTree(rootDir) {
+  include("**/*.gradle")
+  exclude("build", "**/gradle", "settings.gradle", "buildSrc", "/build.gradle", ".", "out", "help")
+}.forEach {
+  def projectPath = it.parentFile.absolutePath
+      .replace(rootDir.toString(), "")
+      .replace(File.separator, ":")
+  include(projectPath)
+  project(projectPath).projectDir = it.parentFile
+  project(projectPath).buildFileName = it.name
+}
+
+// 限制当前项目智能使用 JDK 21
+gradle.settingsEvaluated {
+  if (JavaVersion.current() < JavaVersion.VERSION_21) {
+    throw GradleException("This build requires JDK 21. It's currently ${JavaVersion.current()}. You can ignore this check by passing '-Dorg.gradle.ignoreBuildJavaVersionCheck'.")
+  }
+}

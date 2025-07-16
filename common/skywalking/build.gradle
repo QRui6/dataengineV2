@@ -1,0 +1,5 @@
+dependencies {
+  // sky Walking 依赖
+  api(libs.apm.toolkit.logback)
+  api(libs.apm.toolkit.trace)
+}

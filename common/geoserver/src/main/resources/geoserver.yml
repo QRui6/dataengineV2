@@ -1,0 +1,38 @@
+spring:
+  geo-server:
+    # 是否启用 GeoServer 功能
+    enabled: ${urban.carbon.geo-server.enabled}
+    # GeoServer 的基础 URL 地址
+    baseUrl: ${urban.carbon.geo-server.baseUrl}
+    # 登录 GeoServer 的用户名
+    userName: ${urban.carbon.geo-server.userName}
+    # 登录 GeoServer 的密码
+    password: ${urban.carbon.geo-server.password}
+    # GeoServer 中的工作空间名称
+    workspace: ${urban.carbon.geo-server.workspace}
+    # 数据存储的基准名称
+    BaseStoreName: ${urban.carbon.geo-server.BaseStoreName}
+    # 地理坐标系
+    geoCode: ${urban.carbon.geo-server.geoCode}
+    # 投影坐标系
+    geoProjection: ${urban.carbon.geo-server.geoProjection}
+    # WMS 服务的 URL 地址
+    wmsServiceBaseUrl: ${urban.carbon.geo-server.baseUrl}/${urban.carbon.geo-server-workspace}/wms
+    # rest 服务的 URL 地址
+    restServiceBaseUrl: ${urban.carbon.geo-server.baseUrl}/rest
+
+  http-pool:
+    # 每个路由的默认最大连接数
+    defaultMaxPerRoute: ${urban.carbon.http-pool.defaultMaxPerRoute}
+    # 总最大连接数
+    maxTotal: ${urban.carbon.http-pool.maxTotal}
+    # 连接空闲后验证时间（毫秒）
+    validateAfterInactivity: ${urban.carbon.http-pool.validateAfterInactivity}
+    # 连接超时时间（毫秒）
+    connectTimeout: ${urban.carbon.http-pool.connectTimeout}
+    # 请求连接的超时时间（毫秒）
+    connectionRequestTimeout: ${urban.carbon.http-pool.connectionRequestTimeout}
+    # Socket 读取超时时间（毫秒）
+    socketTimeout: ${urban.carbon.http-pool.socketTimeout}
+    # Response timeout 设置 （毫秒）
+    responseTimeout: ${urban.carbon.http-pool.responseTimeout}

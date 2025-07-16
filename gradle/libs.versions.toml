@@ -1,0 +1,116 @@
+[versions]
+springboot = "3.5.3"
+lombok = "1.18.30"
+# spring-cloud = "2025.0.0"
+# spring-cloud-alibaba = "2023.0.3.3"
+guava = "33.4.8-jre"
+fastjson2 = "2.0.57"
+dubbo = "3.3.5"
+mapstruct = "1.6.3"
+hutool = "5.8.39"
+common-lang3 = "3.18.0"
+sensitive = "1.7.0"
+# spring-web = "6.1.21"
+httpclient = "5.5"
+redisson = "3.24.3"
+caffeine = "3.1.8"
+jetcache = "2.7.5"
+mybatis-spring-boot-starter = "3.0.4"
+mybatis-plus-boot3-starter = "3.5.12"
+postgresql = "42.7.7"
+druid = "1.2.25"
+sa-token = "1.44.0"
+datasource-nacos = "1.8.8"
+aop = "1.9.24"
+skywalking = "9.4.0"
+minio = "8.5.17"
+hadoop-client = "3.4.1"
+avro = "1.11.4"
+jline = "3.25.0"
+
+[libraries]
+
+# 注解处理相关依赖
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+
+# Nacos 相关依赖
+spring-cloud-starter-alibaba-nacos-discovery = { module = "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery" }
+spring-cloud-starter-alibaba-nacos-config = { module = "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config" }
+spring-cloud-starter-bootstrap = { module = "org.springframework.cloud:spring-cloud-starter-bootstrap" }
+
+# dubbo 相关依赖
+dubbo-spring-boot-starter = { group = "org.apache.dubbo", name = "dubbo-spring-boot-starter", version.ref = "dubbo" }
+dubbo-registry-nacos = { group = "org.apache.dubbo", name = "dubbo-registry-nacos", version.ref = "dubbo" }
+
+# spring web 相关依赖
+# spring-web = { group = "org.springframework", name = "spring-web", version.ref = "spring-web" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springboot" }
+
+# spring boot 相关依赖
+spring-boot-parent = { group = "org.springframework.boot", name = "spring-boot-starter-parent", version.ref = "springboot" }
+# spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springboot" }
+spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springboot" }
+spring-boot-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation", version.ref = "springboot" }
+
+# spring cloud TODO 这里使用 MavenBom 的方式引入，该种方式要求直接使用字符串加上版本号来确定
+# spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
+# spring-cloud-alibaba-dependencies = { group = "com.alibaba.cloud", name = "spring-cloud-alibaba-dependencies", version.ref = "spring-cloud-alibaba" }
+spring-cloud-alibaba-sentinel-gateway = { group = "com.alibaba.cloud", name = "spring-cloud-alibaba-sentinel-gateway" }
+spring-cloud-starter-alibaba-sentinel = { group = "com.alibaba.cloud", name = "spring-cloud-starter-alibaba-sentinel" }
+spring-cloud-alibaba-sentinel-datasource = { group = "com.alibaba.cloud", name = "spring-cloud-alibaba-sentinel-datasource" }
+sentinel-datasource-nacos = { group = "com.alibaba.csp", name = "sentinel-datasource-nacos", version.ref = "datasource-nacos" }
+
+# 通用工具
+fastjson2 = { group = "com.alibaba.fastjson2", name = "fastjson2", version.ref = "fastjson2" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+hutool-all = { group = "cn.hutool", name = "hutool-all", version.ref = "hutool" }
+common-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "common-lang3" }
+
+# 敏感信息日志
+sensitive-logback = { group = "com.github.houbb", name = "sensitive-logback", version.ref = "sensitive" }
+sensitive-core = { group = "com.github.houbb", name = "sensitive-core", version.ref = "sensitive" }
+
+# http 客户端依赖
+httpclient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "httpclient" }
+httpcore = { group = "org.apache.httpcomponents.core5", name = "httpcore5" }
+
+# redis 与 cache 的依赖
+spring-boot-starter-data-redis = { group = "org.springframework.boot", name = "spring-boot-starter-data-redis" }
+redisson-spring-boot-starter = { group = "org.redisson", name = "redisson-spring-boot-starter", version.ref = "redisson" }
+caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine" }
+jetcache-starter-redisson = { group = "com.alicp.jetcache", name = "jetcache-starter-redisson", version.ref = "jetcache" }
+# 修复 redisson 的依赖
+redisson = { group = "org.redisson", name = "redisson", version.ref = "redisson" }
+
+# 测试框架
+junit = { group = "junit", name = "junit" }
+spring-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+
+# 数据库连接 相关配置
+mybatis-spring-boot-starter = { group = "org.mybatis.spring.boot", name = "mybatis-spring-boot-starter", version.ref = "mybatis-spring-boot-starter" }
+mybatis-plus-spring-boot3-starter = { group = "com.baomidou", name = "mybatis-plus-boot-starter", version.ref = "mybatis-plus-boot3-starter" }
+mybatis-plus-jsqlparser = { group = "com.baomidou", name = "mybatis-plus-jsqlparser", version.ref = "mybatis-plus-boot3-starter" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+druid = { group = "com.alibaba", name = "druid", version.ref = "druid" }
+
+# Sa-Token
+sa-token-spring-boot3-starter = { group = "cn.dev33", name = "sa-token-spring-boot3-starter", version.ref = "sa-token" }
+sa-token-redis-jackson = { group = "cn.dev33", name = "sa-token-redis-jackson", version.ref = "sa-token" }
+# commons-pool2 = { group = "org.apache.commons", name = "commons-pool2" }
+
+# AOP 依赖
+aspectjrt = { group = "org.aspectj", name = "aspectjrt", version.ref = "aop" }
+aspectjweaver = { group = "org.aspectj", name = "aspectjweaver", version.ref = "aop" }
+
+# sky walking
+apm-toolkit-logback = { group = "org.apache.skywalking", name = "apm-toolkit-logback-1.x", version.ref = "skywalking" }
+apm-toolkit-trace = { group = "org.apache.skywalking", name = "apm-toolkit-trace", version.ref = "skywalking" }
+
+# 文件上传相关配置
+minio = { group = "io.minio", name = "minio", version.ref = "minio" }
+hadoop-client = { group = "org.apache.hadoop", name = "hadoop-client", version.ref = "hadoop-client"}
+jcl-over-slf4j = { group = "org.slf4j", name = "jcl-over-slf4j" }
+# 修复 hadoop 3.4.1 存在的危险依赖
+avro = { group = "org.apache.avro", name = "avro", version.ref = "avro" }
+jline = { group = "org.jline", name = "jline", version.ref = "jline"}

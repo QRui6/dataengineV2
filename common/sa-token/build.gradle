@@ -1,0 +1,6 @@
+dependencies {
+  // Sa Token spring boot 依赖
+  api(libs.sa.token.spring.boot3.starter)
+  // Sa Token redis 缓存实现
+  api(libs.sa.token.redis.jackson)
+}

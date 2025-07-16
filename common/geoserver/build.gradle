@@ -1,0 +1,10 @@
+dependencies {
+  // 引入 base 模块
+  implementation(project(":common:base"))
+  // http client
+  implementation(libs.httpclient)
+  implementation(libs.httpcore)
+  // test 框架
+  testImplementation(libs.junit)
+  testImplementation(libs.spring.test)
+}

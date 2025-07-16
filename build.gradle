@@ -1,0 +1,64 @@
+// 插件配置：应用必要的 Gradle 插件
+plugins {
+  id 'java-library' // 使用 Java 库插件，适用于普通 Java 模块
+  id 'org.springframework.boot' // Spring Boot 插件，用于构建可执行的 Spring Boot 应用
+  id 'io.spring.dependency-management' // Spring 的依赖管理插件，便于统一管理依赖版本
+}
+
+// 全局项目配置：为所有项目设置公共属性
+allprojects {
+  // 设置项目的 group（组织标识）
+  group = "com.urban.carbon"
+  // 设置项目的版本号
+  version = "0.0.2"
+}
+
+// 子项目通用配置：为每个子项目定义共享配置
+subprojects { subproject ->
+
+  // 应用通用插件
+  apply plugin: 'java-library'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'org.springframework.boot'
+  // 配置仓库地址：Gradle 会从这些仓库下载依赖
+  repositories {
+    // 本地 flatDir 仓库，通常用于放置第三方或本地 jar 包
+    flatDir {
+      dirs "D:\\Programs\\maven\\maven-repo"
+      name = 'libs'
+    }
+    // 本地 Maven 缓存仓库，用于查找本地安装的依赖
+    mavenLocal()
+    // 阿里云公共仓库，加快依赖下载速度
+    maven {
+      url = "https://maven.aliyun.com/repository/public"
+    }
+    // Maven Central 官方中央仓库
+    mavenCentral()
+  }
+
+  // 依赖管理：统一控制依赖版本
+  dependencyManagement {
+    dependencies {
+      imports {
+        // 引入 Spring Cloud 的 BOM 版本管理
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
+        // 引入 Spring Cloud Alibaba 的 BOM 版本管理
+        mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:2023.0.3.3"
+      }
+    }
+  }
+
+  // 子项目通用依赖配置
+  dependencies {
+    // Spring Boot 基础依赖
+    implementation(libs.spring.boot.parent)
+    implementation(libs.spring.boot.starter)
+    // Lombok：编译期自动生成代码，减少样板代码量
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    // MapStruct：用于生成类型安全的 Bean 映射代码
+    compileOnly(libs.mapstruct)
+    annotationProcessor(libs.mapstruct)
+  }
+}

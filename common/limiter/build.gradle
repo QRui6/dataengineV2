@@ -1,0 +1,12 @@
+dependencies {
+  // 引入 cache 模块
+  implementation(project(":common:cache"))
+  // sentinel 配置
+  implementation(libs.spring.cloud.alibaba.sentinel.gateway)
+  implementation(libs.spring.cloud.starter.alibaba.sentinel)
+  implementation(libs.spring.cloud.alibaba.sentinel.datasource)
+  implementation(libs.sentinel.datasource.nacos)
+  // 引入测试模块
+  testImplementation(libs.junit)
+  testImplementation(libs.spring.test)
+}

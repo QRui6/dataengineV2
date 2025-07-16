@@ -1,0 +1,18 @@
+dependencies {
+  implementation(project(":common:base"))
+  // minio 依赖
+  implementation(libs.minio)
+  // hadoop 依赖
+  implementation(libs.hadoop.client) {
+    exclude group: "commons-logging", module: "commons-logging"
+    exclude group: "org.slf4j", module: "slf4j-api"
+    exclude group: "ch.qos.reload4j", module: "reload4j"
+    exclude group: "org.apache.avro", module: "avro"
+    exclude group: "org.jline", module: "jline"
+  }
+  // 修复hadoop的危险依赖
+  implementation(libs.avro)
+  implementation(libs.jline)
+  // 引入日志桥接器
+  runtimeOnly(libs.jcl.over.slf4j)
+}

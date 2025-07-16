@@ -1,0 +1,12 @@
+dependencies {
+  // 引入 base
+  implementation(project(":common:base"))
+  // Dubbo 配置
+  api(libs.dubbo.registry.nacos)
+  api(libs.dubbo.spring.boot.starter)
+  // AOP 切面编程依赖
+  implementation(libs.aspectjrt)
+  implementation(libs.aspectjweaver)
+  // common lang3
+  implementation(libs.common.lang3)
+}

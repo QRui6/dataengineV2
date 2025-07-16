@@ -1,0 +1,3 @@
+redis:
+  address: redis://121.194.93.38:6379
+  password: jcf0326_103

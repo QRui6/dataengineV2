@@ -1,0 +1,83 @@
+urban:
+  carbon:
+    # PostGreSQL 数据库配置
+    postgresql:
+      url: "jdbc:postgresql://121.194.93.38:5432/ucarbon"
+      username: "postgres"
+      password: "jcf0326_103"
+    # Redis 缓存配置
+    redis:
+      url: "121.194.93.38"
+      port: 6379
+      password: "jcf0326_103"
+    # Nacos 注册中心配置
+    nacos:
+      server:
+        url: "121.194.93.38:8848"
+    # Dubbo 服务配置
+    dubbo:
+      nacos:
+        namespace: "a024fe51-1bde-4ff4-8004-fcd06a5b9d8b"
+        group: "dubbo"
+      redis:
+        url: "121.194.93.38"
+        port: 6379
+        password: "jcf0326_103"
+    # Sentinel 限流组件的配置
+    sentinel:
+      url: "121.194.93.38"
+      port: 8090
+      nacos:
+        data-id: "data-engine-gateway-sentinel"
+    # 文件存储的配置
+    file:
+      # 切片大小
+      slice: "16MB"
+      # 单个文件最大尺寸
+      totalMaxSize: "5GB"
+      # 配置存储到本地文件系统或者存储到HDFS的阈值
+      threshold: 128
+      # 配置大文件上传的阈值
+      max-file-size: "24MB"
+      # 配置请求最大的大小
+      max-request-size: "32MB"
+      # tomcat 配置
+      max-http-form-post-size: "32MB"
+      # 本地 文件存储的位置
+      local:
+        enabled: true
+        basePath: "/root/Documents/data/dataengine/"
+        savePath: "file"
+      # HDFS 文件存储的位置
+      hdfs:
+        enabled: true
+        basePath: "/data"
+        hdfsHost: "121.194.93.38"
+        hdfsPort: 8020
+        hdfsUser: "root"
+      minio:
+        enabled: true
+        basePath: "data"
+        host: "121.194.93.61"
+        port: 9000
+        user: "admin"
+        password: "jcf0326_103"
+    # HTTP 连接池配置
+    http-pool:
+      defaultMaxPerRoute: 2
+      maxTotal: 20
+      validateAfterInactivity: 2000
+      connectTimeout: 2000
+      connectionRequestTimeout: 20000
+      socketTimeout: 20000
+      responseTimeout: 30000
+    # GeoServer 配置
+    geo-server:
+      enabled: true
+      baseUrl: "http://121.194.93.45:5000/geoserver"
+      userName: "admin"
+      password: "geoserver"
+      workspace: "urban"
+      BaseStoreName: "carbon"
+      geoCode: "EPSG:4326"
+      geoProjection: "EPSG:32662"

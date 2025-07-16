@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="LOCAL" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../Programs/gradle-8.14.3" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/app/calculate" />
+            <option value="$PROJECT_DIR$/app/cli" />
+            <option value="$PROJECT_DIR$/app/data" />
+            <option value="$PROJECT_DIR$/app/data/data-manager" />
+            <option value="$PROJECT_DIR$/app/data/data-source" />
+            <option value="$PROJECT_DIR$/app/service" />
+            <option value="$PROJECT_DIR$/app/upload" />
+            <option value="$PROJECT_DIR$/app/user" />
+            <option value="$PROJECT_DIR$/auth" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/common/api" />
+            <option value="$PROJECT_DIR$/common/base" />
+            <option value="$PROJECT_DIR$/common/cache" />
+            <option value="$PROJECT_DIR$/common/config" />
+            <option value="$PROJECT_DIR$/common/data-source-config" />
+            <option value="$PROJECT_DIR$/common/file" />
+            <option value="$PROJECT_DIR$/common/geoserver" />
+            <option value="$PROJECT_DIR$/common/limiter" />
+            <option value="$PROJECT_DIR$/common/lock" />
+            <option value="$PROJECT_DIR$/common/rpc" />
+            <option value="$PROJECT_DIR$/common/sa-token" />
+            <option value="$PROJECT_DIR$/common/skywalking" />
+            <option value="$PROJECT_DIR$/common/web" />
+            <option value="$PROJECT_DIR$/gateway" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

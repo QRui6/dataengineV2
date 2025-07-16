@@ -1,0 +1,36 @@
+spring:
+  file:
+    strategy:
+      totalFileMaxSize: ${urban.carbon.file.totalMaxSize}
+      sliceSize: ${urban.carbon.file.slice}
+      threshold: ${urban.carbon.file.threshold}
+      localFileSystem:
+        enabled: ${urban.carbon.file.local.enabled}
+        basePath: ${urban.carbon.file.local.basePath}
+        savePath: ${urban.carbon.file.local.savePath}
+      hdfsFileSystem:
+        enabled: ${urban.carbon.file.hdfs.enabled}
+        basePath: ${urban.carbon.file.hdfs.enabled}
+        savePath: ${urban.carbon.file.hdfs.savePath}
+        hdfsHost: ${urban.carbon.file.hdfs.hdfsHost}
+        hdfsPort: ${urban.carbon.file.hdfs.hdfsPort}
+        hdfsUser: ${urban.carbon.file.hdfs.hdfsUser}
+      minioFileSystem:
+        enabled: ${urban.carbon.file.minio.enabled}
+        basePath: ${urban.carbon.file.minio.basePath}
+        savePath: ${urban.carbon.file.minio.savePath}
+        minioHost: ${urban.carbon.file.minio.host}
+        minioPort: ${urban.carbon.file.minio.port}
+        minioUser: ${urban.carbon.file.minio.user}
+        minioPassword: ${urban.carbon.file.minio.password}
+    # 大文件上传配置
+    servlet:
+      multipart:
+        max-file-size: ${urban.carbon.file.max-file-size}
+        max-request-size: ${urban.carbon.file.max-request-size}
+
+# tomcat 配置
+server:
+  tomcat:
+    # 这个参数用来控制Post请求体的大小，这是直接进行上传的操作
+    max-http-form-post-size: ${urban.carbon.file.max-http-form-post-size}

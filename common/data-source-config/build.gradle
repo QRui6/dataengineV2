@@ -1,0 +1,17 @@
+dependencies {
+  // 为所有的子项目添加 lombok 与 mapstruct 注解处理器
+  implementation(project(":common:base"))
+  // MyBatis 依赖
+  api(libs.mybatis.spring.boot.starter)
+  // Mybatis-plus 依赖
+  api(libs.mybatis.plus.spring.boot3.starter)
+  // MyBatis-plus 插件依赖
+  implementation(libs.mybatis.plus.jsqlparser)
+  // postgresql 依赖
+  implementation(libs.postgresql)
+  // druid 连接池
+  implementation(libs.druid)
+  // 测试依赖
+  testImplementation(libs.junit)
+  testImplementation(libs.spring.test)
+}

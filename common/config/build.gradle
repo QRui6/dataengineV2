@@ -1,0 +1,10 @@
+dependencies {
+    // alibaba 下 spring cloud 的 nacos 配置
+    api(libs.spring.cloud.starter.alibaba.nacos.discovery) {
+        exclude group: 'org.springframework.cloud', module: 'spring-cloud-starter-netflix-ribbon'
+    }
+    // spring cloud 下 nacos 的配置
+    api(libs.spring.cloud.starter.alibaba.nacos.config)
+    // spring cloud bootstrap 依赖
+    api(libs.spring.cloud.starter.bootstrap)
+}

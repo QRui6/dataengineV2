@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: ${urban.carbon.sentinel.url}
+        port: ${urban.carbon.sentinel.port}
+      datasource:
+        ds:
+          nacos:
+            server-addr: ${urban.carbon.nacos.server.url}
+            data-id:  ${urban.carbon.sentinel.nacos.data-id}
+            group-id: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow  # 也可以是 degrade, param-flow, etc.

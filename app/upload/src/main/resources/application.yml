@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: data-engine-upload
+    log:
+      path: /root/Documents/output/dataengine
+  config:
+    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:rpc.yml,classpath:file.yml
+
+dubbo:
+  protocol:
+    port: 33334
+
+server:
+  port: 8087
