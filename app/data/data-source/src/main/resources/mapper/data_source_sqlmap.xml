@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urban.carbon.data.source.infrastructure.mapper.DataSourceMapper">
+  <resultMap id="resultDataSourceMap" type="com.urban.carbon.data.source.domain.entity.DataSource">
+    <result property="id" column="ID" />
+    <result property="dsName" column="DS_NAME" />
+    <result property="dsUserId" column="DS_NAME_ID" />
+    <result property="dsDesc" column="DS_DESC " />
+    <result property="gmtCreate" column="GMT_CREATE" />
+    <result property="gmtModified" column="GMT_MODIFIED" />
+    <result property="deleted" column="DELETED" />
+    <result property="lockVersion" column="LOCK_VERSION" />
+  </resultMap>
+
+  <select id="findByIds" resultMap="resultDataSourceMap">
+    SELECT *
+    FROM "public"."data_source"
+    WHERE "deleted"=0 AND "ds_user_id"=#{loginId} AND
+    <foreach item="dsId" collection="dsIds" separator="," open="id IN (" close=")">
+      #{dsId}
+    </foreach>;
+
+  </select>
+
+  <select id="findByName" resultMap="resultDataSourceMap">
+    SELECT *
+    FROM "public"."data_source"
+    WHERE "deleted"=0 AND "ds_name" like '%#{dsName}%' AND "ds_user_id"= #{loginId};
+  </select>
+
+  <select id="findById" resultMap="resultDataSourceMap">
+    SELECT *
+    FROM "public"."data_source"
+    WHERE "deleted"=0 AND "id"=#{dsId} AND "ds_user_id"=#{loginId};
+  </select>
+
+  <select id="listAllDS" resultMap="resultDataSourceMap">
+    SELECT *
+    FROM "public"."data_source"
+    WHERE "deleted"=0
+    AND "ds_user_id"=#{loginId}
+    <if test="dsType != null">
+      AND "ds_type"='${dsType}'
+    </if>
+  </select>
+</mapper>
