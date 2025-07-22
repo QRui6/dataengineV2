@@ -1,6 +1,8 @@
 package com.urban.carbon.file.strategy;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
@@ -23,7 +25,7 @@ public interface FileStrategy {
      * 将指定路径的临时文件或分片上传到目标存储系统
      *
      * @param filePath 本地文件路径（或临时分片路径）
-     * @return         是否上传成功
+     * @return 是否上传成功
      */
     String uploadFile(String filePath);
 
@@ -31,7 +33,7 @@ public interface FileStrategy {
      * 将指定路径的临时文件或分片上传到目标存储系统
      *
      * @param filePath 本地文件路径（或临时分片路径）
-     * @return         是否上传成功
+     * @return 是否上传成功
      */
     String uploadFile(Path filePath);
 
@@ -39,19 +41,20 @@ public interface FileStrategy {
      * 从目标存储系统中删除指定路径的文件
      *
      * @param filePath 要删除的文件路径
-     * @return         是否删除成功
+     * @return 是否删除成功
      */
     Boolean deleteFile(String filePath);
 
     /**
-     * 从目标存储系统中下载指定路径的文件内容
-     * 返回值为 InputStream：允许调用方按需读取文件内容，适合大文件。
-     * 不加载整个文件到内存：通过流的方式逐步读取和传输数据，降低内存压力。
-     * 调用者负责关闭流：文档中应注明调用方需要自行关闭流以释放资源。
+     * 从目标存储系统中下载指定路径的文件内容，并写入到输出流中。
+     * 该方法适用于大文件下载，避免将整个文件加载到内存中。
+     * 调用者必须确保输出流在使用完毕后正确关闭。
      *
-     * @param filePath 文件在存储系统中的路径
-     * @return 返回文件内容的输入流，用于流式下载，适用于大文件
+     * @param filePath     文件在存储系统中的路径
+     * @param outputStream 输出流，用于写入文件内容
+     * @throws IOException 下载过程中发生 I/O 异常
      */
-    InputStream downloadFile(String filePath);
+    void downloadFile(String filePath, OutputStream outputStream) throws IOException;
+
 
 }

@@ -14,9 +14,8 @@ import lombok.*;
 public class UploadInitRequest extends BaseRequest {
 
     /**
-     * 需要上传的文件名称（不需要完整路径）
+     * 需要上传的文件id
      */
-    @NotBlank
     private String fileId;
 
     /**

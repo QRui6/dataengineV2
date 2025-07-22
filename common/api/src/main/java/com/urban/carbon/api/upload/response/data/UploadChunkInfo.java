@@ -24,7 +24,7 @@ public class UploadChunkInfo implements Serializable {
     /**
      * 分片索引
      */
-    private Long chunkIndex;
+    private Integer chunkIndex;
 
     /**
      * 是否接收成功
@@ -42,7 +42,7 @@ public class UploadChunkInfo implements Serializable {
      * @param chunkIndex 分片索引
      * @param received 是否接收成功
      */
-    public void extracted(String fileId, Long chunkIndex, boolean received) {
+    public void extracted(String fileId, Integer chunkIndex, boolean received) {
         this.setFileId(fileId);
         this.setChunkIndex(chunkIndex);
         this.setReceived(received);

@@ -57,17 +57,18 @@ public class UploadCache {
      * 创建缓存的函数
      * 该函数用于初始化上传文件的缓存信息，根据上传请求的相关数据设置缓存的各个属性
      *
-     * @param request     上传初始化请求对象，包含上传文件的基本信息和配置
+     * @param dataName    数据的名称
+     * @param dataDesc    数据的描述
      * @param chunkSize   文件分块大小，单位为字节，用于指示每个文件块的大小
      * @param totalChunks 总文件块数量，表示完成上传所需的所有分块数目
      * @param fileSize    文件总大小，单位为字节，用于记录上传文件的总大小
      */
-    public void createCache(UploadInitRequest request, Long chunkSize,
+    public void createCache(String dataName, String dataDesc, Long chunkSize,
                             Long totalChunks, Long fileSize, SaveSoftType saveSoft) {
         // 设置缓存的名称
-        this.dataName = request.getDataName();
+        this.dataName = dataName;
         // 设置缓存的描述信息
-        this.dataDesc = request.getDataDesc();
+        this.dataDesc = dataDesc;
         // 设置文件分块大小
         this.chunkSize = chunkSize;
         // 设置总文件块数量

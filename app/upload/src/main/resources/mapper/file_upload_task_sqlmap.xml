@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.urban.carbon.upload.infrastructure.mapper.FileUploadTaskMapper">
+
+  <resultMap id="BaseResultMap" type="com.urban.carbon.upload.domain.entity.FileUploadTask">
+    <id column="ID" property="id" jdbcType="BIGINT"/>
+    <result column="FILE_ID" property="fileId" jdbcType="VARCHAR"/>
+    <result column="DATA_INFO_ID" property="dataInfoId" jdbcType="BIGINT"/>
+    <result column="CHUNK_SIZE" property="chunkSize" jdbcType="BIGINT"/>
+    <result column="TOTAL_CHUNKS" property="totalChunks" jdbcType="INTEGER"/>
+    <result column="SAVE_SOFT" property="saveSoft" jdbcType="VARCHAR"/>
+    <result column="STATUS" property="status" jdbcType="SMALLINT"/>
+    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP"/>
+    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP"/>
+    <result column="GMT_EXPIRED" property="gmtExpired" jdbcType="TIMESTAMP"/>
+    <result column="CREATED_BY" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="DELETED" property="deleted" jdbcType="SMALLINT"/>
+    <result column="LOCK_VERSION" property="lockVersion" jdbcType="INTEGER"/>
+  </resultMap>
+
+</mapper>

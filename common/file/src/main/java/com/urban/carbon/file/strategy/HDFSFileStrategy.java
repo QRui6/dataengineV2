@@ -11,6 +11,7 @@ import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 
 /**
@@ -123,22 +124,28 @@ public class HDFSFileStrategy implements FileStrategy {
     }
 
     @Override
-    public InputStream downloadFile(String filePath) {
-        try {
-            Path path = this.getTargetPath(filePath);
-            if (!fileSystem.exists(path)) {
-                throw new FileException("File not found in HDFS: " + filePath,
-                        FileErrorCode.FILE_NOT_FOUND);
+    public void downloadFile(String filePath, OutputStream outputStream) throws IOException {
+        Path path = getTargetPath(filePath);
+        if (!fileSystem.exists(path)) {
+            throw new IOException("File not found in HDFS: " + filePath);
+        }
+
+        try (InputStream inputStream = fileSystem.open(path)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
             }
-            return fileSystem.open(path);
         } catch (IOException e) {
-            log.error("Failed to open file from HDFS: {}", e.getMessage());
-            throw new FileException(e.getMessage(), FileErrorCode.HDFS_DOWNLOAD_FAILED);
+            log.error("Failed to open or read file from HDFS: {}", filePath, e);
+            throw e;
         }
     }
 
+
     /**
      * 获取目标路径
+     *
      * @param filePath 文件路径
      * @return 目标路径
      */

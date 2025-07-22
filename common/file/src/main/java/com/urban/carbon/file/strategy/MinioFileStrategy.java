@@ -8,7 +8,9 @@ import io.minio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 @Slf4j
@@ -126,7 +128,7 @@ public class MinioFileStrategy implements FileStrategy {
                 log.info("Successfully Create MinIO Bucket: {}", basePath);
             }
         } catch (Exception e) {
-            log.error("检查或创建 MinIO 存储桶失败", e);
+            log.error("Check or Create MinIO Bucket Failed", e);
             throw new FileException(FileErrorCode.MINIO_CONNECTION_FAILED);
         }
     }
@@ -155,7 +157,7 @@ public class MinioFileStrategy implements FileStrategy {
                     basePath + "/" + objectName);
             return basePath + "/" + objectName;
         } catch (Exception e) {
-            log.error("文件上传失败：{}", e.getMessage());
+            log.error("File Upload Failed: {}", e.getMessage());
             return null;
         }
     }
@@ -179,30 +181,37 @@ public class MinioFileStrategy implements FileStrategy {
                             .object(objectName)
                             .build());
 
-            log.info("文件删除成功：{}", filePath);
+            log.info("File Deleted Success: {}", filePath);
             return true;
         } catch (Exception e) {
-            log.error("文件删除失败：{}", filePath, e);
+            log.error("File Deleted Failed: {}", filePath, e);
             return false;
         }
     }
 
     @Override
-    public InputStream downloadFile(String filePath) {
+    public void downloadFile(String filePath, OutputStream outputStream) throws IOException {
         try {
             // 验证连接是否有效
             this.minioClient = getMinioClient();
             // 获取对象名称
             String objectName = getObjectName(filePath);
             // 获取文件输入流
-            return minioClient.getObject(
+            try (InputStream inputStream = minioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(minioProperties.getBasePath())
                             .object(objectName)
-                            .build());
+                            .build())) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
         } catch (Exception e) {
-            log.error("文件下载失败：{}", filePath, e);
-            throw new FileException(FileErrorCode.MINIO_DOWNLOAD_FAILED);
+            log.error("File Download Failed: {}", filePath, e);
+            throw new IOException("MinIO download failed", e);
         }
     }
+
 }

@@ -73,6 +73,11 @@ public class UploadStatusInfo implements Serializable {
      */
     private String dataDesc;
 
+    /**
+     * 上传失败的列表
+     */
+    private List<Integer> failedChunks;
+
     public void buildResponse(String fileId, Long totalChunks, String dataName, String dataDesc,
                               Long fileSize, SaveSoftType saveSoftType, String dataType,
                               List<Integer> uploadedChunks, String filePath, Boolean canceled) {

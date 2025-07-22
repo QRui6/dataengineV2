@@ -20,12 +20,17 @@ public class UploadChunkRequest extends BaseRequest {
     /**
      * 分片索引
      */
-    private Long chunkIndex;
+    private Integer chunkIndex;
 
     /**
      * 文件
      */
     private InputStream fileInputStream;
+
+    /**
+     * 文件的MD5
+     */
+    private String hashMD5;
 
     /**
      * 创建上传分片请求
@@ -34,9 +39,11 @@ public class UploadChunkRequest extends BaseRequest {
      * @param chunkIndex 分片索引
      * @param inputStream 文件输入流
      */
-    public void createRequest(String fileId, Long chunkIndex, InputStream inputStream) {
+    public void createRequest(String fileId, Integer chunkIndex,
+                              InputStream inputStream, String hashMD5) {
         this.fileId = fileId;
         this.chunkIndex = chunkIndex;
         this.fileInputStream = inputStream;
+        this.hashMD5 = hashMD5;
     }
 }
