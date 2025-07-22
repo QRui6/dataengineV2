@@ -1,10 +1,10 @@
-package com.urban.carbon.data.domain.service;
+package com.urban.carbon.data.manager.domain.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.api.data.manager.constants.DataOperateType;
-import com.urban.carbon.data.domain.entity.Data;
+import com.urban.carbon.data.manager.domain.entity.Data;
 import com.urban.carbon.data.entity.OperateStream;
-import com.urban.carbon.data.infrastructure.mapper.OperateStreamMapper;
+import com.urban.carbon.data.manager.infrastructure.mapper.OperateStreamMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

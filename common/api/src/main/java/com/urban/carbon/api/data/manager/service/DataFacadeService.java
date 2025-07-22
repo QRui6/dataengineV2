@@ -12,5 +12,5 @@ public interface DataFacadeService {
      * @param request 创建数据请求
      * @return 创建数据结果
      */
-    OperateResponse<DataInfo> createData(DataCreateRequest request);
+    OperateResponse<DataInfo> initCreateData(DataCreateRequest request);
 }

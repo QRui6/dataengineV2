@@ -6,5 +6,11 @@ spring:
   config:
     import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml
 
+dubbo:
+  protocol:
+    port: 33334
+  application:
+    qos-port: 22222
+
 server:
   port: 8086

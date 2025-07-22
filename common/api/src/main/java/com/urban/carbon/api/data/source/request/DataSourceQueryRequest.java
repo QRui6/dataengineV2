@@ -16,8 +16,9 @@ public class DataSourceQueryRequest extends BaseRequest {
      *
      * @param dataSourceId 数据源ID
      */
-    public DataSourceQueryRequest(Long dataSourceId) {
+    public DataSourceQueryRequest(Long dataSourceId, Long loginId) {
         this.condition = new DataSourceIdQueryCondition(dataSourceId);
+        this.setLoginId(loginId);
     }
 
     /**
@@ -25,7 +26,8 @@ public class DataSourceQueryRequest extends BaseRequest {
      *
      * @param dataSourceName 数据源名称
      */
-    public DataSourceQueryRequest(String dataSourceName) {
+    public DataSourceQueryRequest(String dataSourceName, Long loginId) {
         this.condition = new DataSourceNameQueryCondition(dataSourceName);
+        this.setLoginId(loginId);
     }
 }

@@ -33,6 +33,7 @@ jline = "3.25.0"
 # 注解处理相关依赖
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 
 # Nacos 相关依赖
 spring-cloud-starter-alibaba-nacos-discovery = { module = "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery" }

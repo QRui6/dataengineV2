@@ -1,4 +1,4 @@
-package com.urban.carbon.data.controller;
+package com.urban.carbon.data.manager.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.urban.carbon.api.data.manager.request.DataCreateRequest;
@@ -23,14 +23,16 @@ public class DataManagerController {
         return "test";
     }
 
-    @PostMapping("/add")
-    public Result<DataInfo> createDataInfo(
-            @RequestParam String dataName, @RequestParam String dataDesc,
-            @RequestParam Long dataSourceId) {
-        String loginId = (String) StpUtil.getLoginId();
+    @PostMapping("/initCreate")
+    public Result<DataInfo> initCreateDataInfo(
+            @RequestParam String dataName, @RequestParam String dataDesc, @RequestParam String dataType,
+            @RequestParam Long dataSourceId, @RequestParam Long fileSize) {
+//        String loginId = (String) StpUtil.getLoginId();
+        String loginId = "45";
         DataCreateRequest request = new DataCreateRequest();
-        request.createRequest(dataName, dataDesc, dataSourceId, Long.valueOf(loginId));
-        OperateResponse<DataInfo> response = dataFacadeService.createData(request);
+        request.createRequest(dataName, dataDesc, fileSize, dataType,
+                dataSourceId, Long.valueOf(loginId));
+        OperateResponse<DataInfo> response = dataFacadeService.initCreateData(request);
         return Result.success(response.getData());
     }
 }

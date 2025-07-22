@@ -6,6 +6,8 @@ import com.urban.carbon.api.upload.response.data.UploadChunkInfo;
 import com.urban.carbon.api.upload.response.data.UploadInitInfo;
 import com.urban.carbon.api.upload.response.data.UploadStatusInfo;
 import com.urban.carbon.api.upload.service.FileFacadeService;
+import com.urban.carbon.file.exception.FileErrorCode;
+import com.urban.carbon.file.exception.FileException;
 import com.urban.carbon.rpc.facade.Facade;
 import com.urban.carbon.upload.domain.service.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +26,13 @@ public class FileFacadeServiceImpl implements FileFacadeService {
     }
 
     @Override
-    public UploadInitInfo initUpload(UploadInitRequest request) throws IOException {
-        return fileService.initUpload(request);
+    @Facade
+    public UploadInitInfo initUpload(UploadInitRequest request) {
+        try {
+            return fileService.initUpload(request);
+        } catch (IOException e) {
+            throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
+        }
     }
 
     @Override

@@ -4,11 +4,13 @@ spring:
     log:
       path: /root/Documents/output/dataengine
   config:
-    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:rpc.yml,classpath:datasource.yml
+    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:rpc.yml,classpath:datasource.yml,classpath:file.yml
 
 dubbo:
   protocol:
-    port: 33334
+    port: 33335
+  application:
+    qos-port: 22223
 
 server:
   port: 8088

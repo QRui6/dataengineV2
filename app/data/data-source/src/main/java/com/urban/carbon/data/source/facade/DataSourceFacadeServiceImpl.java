@@ -1,5 +1,8 @@
 package com.urban.carbon.data.source.facade;
 
+import cn.hutool.core.lang.Assert;
+import com.urban.carbon.api.data.source.exception.DataSourceErrorCode;
+import com.urban.carbon.api.data.source.exception.DataSourceException;
 import com.urban.carbon.api.data.source.request.DataSourceIdQueryCondition;
 import com.urban.carbon.api.data.source.request.DataSourceNameQueryCondition;
 import com.urban.carbon.api.data.source.request.DataSourceQueryRequest;
@@ -24,17 +27,19 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
     }
 
     @Override
-    public QueryResponse<DataSourceInfo> queryDataSource(DataSourceQueryRequest request) {
-        DataSource dataSource = switch (request.getCondition()) {
+    public QueryResponse<DataSourceInfo> queryDataSource(DataSourceQueryRequest queryRequest) {
+        DataSource dataSource = switch (queryRequest.getCondition()) {
             case DataSourceIdQueryCondition condition:
                 yield dataSourceService.findById(
-                        condition.getDataSourceId(), request.getLoginId());
+                        condition.getDataSourceId(), queryRequest.getLoginId());
             case DataSourceNameQueryCondition condition:
                 yield dataSourceService.findByName(
-                        condition.getDataSourceName(), request.getLoginId());
+                        condition.getDataSourceName(), queryRequest.getLoginId());
             default:
-                throw new IllegalStateException(request.getCondition() + "'' is not supported");
+                throw new IllegalStateException(queryRequest.getCondition() + "'' is not supported");
         };
+        Assert.notNull(dataSource, () -> new DataSourceException(
+                DataSourceErrorCode.DATA_SOURCE_NOT_EXIST));
         QueryResponse<DataSourceInfo> response = new QueryResponse<>();
         response.setSuccess(true);
         response.setData(DataSourceConvertor.INSTANCE.mapToVo(dataSource));

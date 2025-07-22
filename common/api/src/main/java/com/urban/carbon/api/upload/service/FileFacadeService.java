@@ -16,7 +16,7 @@ public interface FileFacadeService {
      * @param request 初始化上传参数
      * @return 初始化上传结果
      */
-    UploadInitInfo initUpload(UploadInitRequest request) throws IOException;
+    UploadInitInfo initUpload(UploadInitRequest request);
 
     /**
      * 上传分片

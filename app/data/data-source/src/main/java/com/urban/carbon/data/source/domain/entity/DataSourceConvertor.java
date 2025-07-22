@@ -2,6 +2,7 @@ package com.urban.carbon.data.source.domain.entity;
 
 import com.urban.carbon.api.data.source.response.data.DataSourceInfo;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 

@@ -2,70 +2,24 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.urban.carbon.data.infrastructure.mapper.DataMapper">
+<mapper namespace="com.urban.carbon.data.manager.infrastructure.mapper.DataMapper">
 
   <!--  Result Maps  -->
-  <resultMap id="BaseResultMap" type="com.urban.carbon.data.domain.entity.Data" autoMapping="true">
-    <id column="ID" property="id" jdbcType="BIGINT"/>
-    <result column="USER_ID" property="userId" jdbcType="BIGINT"/>
-    <result column="DATA_SOURCE_ID" property="dataSourceId" jdbcType="BIGINT"/>
-    <result column="NAME" property="name" jdbcType="VARCHAR"/>
-    <result column="DESCRIPTION" property="description" jdbcType="TEXT"/>
-    <result column="TYPE" property="type" jdbcType="SMALLINT"/>
-    <result column="CHUNK_SIZE" property="chunkSize" jdbcType="BIGINT"/>
-    <result column="TOTAL_CHUNKS" property="totalChunks" jdbcType="INTEGER"/>
-    <result column="SAVE_SOFT" property="saveSoft" jdbcType="VARCHAR"/>
-    <result column="STATUS" property="status" jdbcType="SMALLINT"/>
-    <result column="GMT_CREATE" property="gmtCreate" jdbcType="TIMESTAMP"/>
-    <result column="GMT_MODIFIED" property="gmtModified" jdbcType="TIMESTAMP"/>
-    <result column="DELETED" property="deleted" jdbcType="SMALLINT"/>
-    <result column="LOCK_VERSION" property="lockVersion" jdbcType="INTEGER"/>
+  <resultMap id="BaseResultMap" type="com.urban.carbon.data.manager.domain.entity.Data" autoMapping="true">
+    <id column="ID" property="id" />
+    <result column="FILE_ID" property="fileId" />
+    <result column="USER_ID" property="userId" />
+    <result column="DATA_SOURCE_ID" property="dataSourceId" />
+    <result column="NAME" property="name" />
+    <result column="DESCRIPTION" property="description" />
+    <result column="TYPE" property="type" />
+    <result column="CHUNK_SIZE" property="chunkSize" />
+    <result column="TOTAL_CHUNKS" property="totalChunks" />
+    <result column="SAVE_SOFT" property="saveSoft" />
+    <result column="STATUS" property="status" />
+    <result column="GMT_CREATE" property="gmtCreate" />
+    <result column="GMT_MODIFIED" property="gmtModified" />
+    <result column="DELETED" property="deleted" />
+    <result column="LOCK_VERSION" property="lockVersion" />
   </resultMap>
-
-  <!--  根据ID查询  -->
-  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
-    SELECT *
-    FROM public.data_info
-    WHERE id = #{id}
-  </select>
-
-  <!--  查询所有数据  -->
-  <select id="selectAll" resultMap="BaseResultMap">
-    SELECT *
-    FROM public.data_info
-  </select>
-
-  <!--  插入数据  -->
-  <insert id="insert" parameterType="com.urban.carbon.data.entity.DataInfo">
-    INSERT INTO public.data_info
-    (user_id, data_source_id, name, description, type, chunk_size, total_chunks,
-     save_soft, status, gmt_create, gmt_modified, deleted, lock_version)
-    VALUES (#{userId}, #{dataSourceId}, #{name}, #{description}, #{type}, #{chunkSize}, #{totalChunks},
-            #{saveSoft}, #{status}, #{gmtCreate}, #{gmtModified}, #{deleted}, #{lockVersion})
-  </insert>
-
-  <!--  更新数据  -->
-  <update id="updateById" parameterType="com.urban.carbon.data.entity.DataInfo">
-    UPDATE public.data_info
-    SET user_id        = #{userId},
-        data_source_id = #{dataSourceId},
-        name           = #{name},
-        description    = #{description},
-        type           = #{type},
-        chunk_size     = #{chunkSize},
-        total_chunks   = #{totalChunks},
-        save_soft      = #{saveSoft},
-        status         = #{status},
-        gmt_modified   = #{gmtModified},
-        deleted        = #{deleted},
-        lock_version   = #{lockVersion}
-    WHERE id = #{id}
-  </update>
-
-  <!--  根据ID删除数据  -->
-  <delete id="deleteById" parameterType="java.lang.Long">
-    DELETE
-    FROM public.data_info
-    WHERE id = #{id}
-  </delete>
 </mapper>

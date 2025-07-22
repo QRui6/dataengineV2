@@ -70,8 +70,21 @@ public enum FileErrorCode implements ErrorCode {
      * 通用文件操作错误
      */
     DIRECTORY_CREATE_FAILED("DIRECTORY_CREATE_FAILED", "目录创建失败"),
+
+    /**
+     * 文件不存在
+     */
     FILE_NOT_FOUND("FILE_NOT_FOUND", "文件不存在"),
-    MINIO_DOWNLOAD_FAILED("MINIO_DOWNLOAD_FAILED", "MinIO文件下载失败");
+
+    /**
+     * MinIO 文件下载失败
+     */
+    MINIO_DOWNLOAD_FAILED("MINIO_DOWNLOAD_FAILED", "MinIO文件下载失败"),
+
+    /**
+     * 上传初始化失败
+     */
+    UPLOAD_INIT_ERROR("UPLOAD_INIT_ERROR", "上传初始化失败");
 
     private final String code;
 

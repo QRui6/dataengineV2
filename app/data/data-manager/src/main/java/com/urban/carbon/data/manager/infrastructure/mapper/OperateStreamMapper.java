@@ -1,4 +1,4 @@
-package com.urban.carbon.data.infrastructure.mapper;
+package com.urban.carbon.data.manager.infrastructure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.urban.carbon.data.entity.OperateStream;

@@ -1,7 +1,8 @@
-package com.urban.carbon.data.domain.entity;
+package com.urban.carbon.data.manager.domain.entity;
 
 import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 
@@ -19,5 +20,6 @@ public interface DataConvertor {
      * @param data 数据源
      * @return 数据源信息
      */
+    @Mapping(source = "data.type", target = "dataType")
     DataInfo mapToVo(Data data);
 }

@@ -1,4 +1,4 @@
-package com.urban.carbon.data;
+package com.urban.carbon.data.manager;
 
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;

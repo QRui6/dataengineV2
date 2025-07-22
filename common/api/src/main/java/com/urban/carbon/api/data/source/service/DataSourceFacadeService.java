@@ -9,9 +9,9 @@ public interface DataSourceFacadeService {
     /**
      * 查询数据源
      *
-     * @param request 查询参数
+     * @param queryRequest 查询参数
      * @return 查询结果
      */
-    QueryResponse<DataSourceInfo> queryDataSource(DataSourceQueryRequest request);
+    QueryResponse<DataSourceInfo> queryDataSource(DataSourceQueryRequest queryRequest);
 
 }

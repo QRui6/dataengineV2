@@ -1,7 +1,9 @@
-package com.urban.carbon.data.domain.entity;
+package com.urban.carbon.data.manager.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
+import com.urban.carbon.api.data.manager.constants.SaveSoftType;
 import com.urban.carbon.data.entity.BaseEntity;
 import lombok.*;
 
@@ -12,6 +14,11 @@ import lombok.*;
 @AllArgsConstructor
 @TableName("public.data_info")
 public class Data extends BaseEntity {
+
+    /**
+     * 文件ID
+     */
+    private String fileId;
 
     /**
      * 用户ID
@@ -34,9 +41,9 @@ public class Data extends BaseEntity {
     private String description;
 
     /**
-     * 数据类型（0-文件，1-表格）
+     * 数据类型
      */
-    private Integer type;
+    private String type;
 
     /**
      * 分片大小（字节）
@@ -56,11 +63,28 @@ public class Data extends BaseEntity {
     /**
      * 上传状态（0-初始化，1-上传中，2-完成，3-失败）
      */
-    private Integer status;
+    private String status;
 
     /**
      * 数据源名称
      */
     @TableField(exist = false)
     private String dataSourceName;
+
+    public void initCreate(String fileId, Long userId, Long dataSourceId, String name,
+                           String description, String dataType, Long chunkSize, Integer totalChunks,
+                           SaveSoftType saveSoft, FileUploadStatus status, String dataSourceName) {
+    this.fileId = fileId;
+    this.userId = userId;
+    this.dataSourceId = dataSourceId;
+    this.name = name;
+    this.description = description;
+    this.type = dataType;
+    this.chunkSize = chunkSize;
+    this.totalChunks = totalChunks;
+    this.saveSoft = saveSoft.name();
+    this.status = status.name();
+    this.dataSourceName = dataSourceName;
+}
+
 }

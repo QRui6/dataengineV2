@@ -59,6 +59,6 @@ subprojects { subproject ->
     annotationProcessor(libs.lombok)
     // MapStruct：用于生成类型安全的 Bean 映射代码
     compileOnly(libs.mapstruct)
-    annotationProcessor(libs.mapstruct)
+    annotationProcessor(libs.mapstruct.processor)
   }
 }
