@@ -4,4 +4,4 @@ spring:
     log:
       path: /root/Documents/output/dataengine
   config:
-    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:rpc.yml,classpath:datasource.yml
+    import: classpath:base.yml,classpath:config.yml
