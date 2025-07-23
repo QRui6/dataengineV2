@@ -126,7 +126,7 @@ public class HDFSFileStrategy implements FileStrategy {
 
     @Override
     public void downloadFile(String filePath, OutputStream outputStream) throws IOException {
-        Path path = getTargetPath(filePath);
+        Path path = new Path(filePath);
         if (!fileSystem.exists(path)) {
             throw new IOException("File not found in HDFS: " + filePath);
         }

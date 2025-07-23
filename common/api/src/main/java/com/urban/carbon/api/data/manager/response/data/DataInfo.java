@@ -51,6 +51,11 @@ public class DataInfo implements Serializable {
     private Long chunkSize;
 
     /**
+     * 文件存储路径
+     */
+    private String filePath;
+
+    /**
      * 存储软件名称
      */
     private String saveSoft;

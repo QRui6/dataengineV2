@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -211,6 +212,22 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
         // 返回成功
         return true;
     }
+
+    /**
+     * 下载文件到指定的输出流
+     *
+     * @param filePath 文件路径，表示需要下载的文件位置
+     * @param saveSoft 保存软件的标识，用于选择合适的文件策略
+     * @param response 输出流，用于接收下载的文件数据
+     * @throws IOException 当文件下载过程中发生I/O错误时抛出此异常
+     */
+    public void downloadFile(String filePath, String saveSoft, OutputStream response) throws IOException {
+        // 根据保存软件的标识获取对应的文件策略
+        FileStrategy strategy = fileStrategyFactory.getStrategy(saveSoft);
+        // 使用获取到的策略执行文件下载操作
+        strategy.downloadFile(filePath, response);
+    }
+
 
     /**
      * 计算保存软件

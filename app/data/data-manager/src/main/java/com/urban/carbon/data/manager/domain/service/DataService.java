@@ -7,12 +7,14 @@ import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
 import com.urban.carbon.api.data.manager.exception.DataErrorCode;
 import com.urban.carbon.api.data.manager.exception.DataException;
 import com.urban.carbon.api.data.manager.response.data.UploadInitInfo;
-import com.urban.carbon.api.data.manager.response.data.UploadStatusInfo;
 import com.urban.carbon.data.manager.domain.entity.Data;
 import com.urban.carbon.data.manager.infrastructure.mapper.DataMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.OutputStream;
 import java.util.Date;
 
 @Service
@@ -46,6 +48,7 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
      * @param info         初始化信息
      * @return 创建的数据
      */
+    @Transactional
     public Data initCreate(
             String dataName, String dataDesc, String dataType, Long fileSize,
             Long dataSourceId, Long loginId, String dsName, UploadInitInfo info) {
@@ -121,4 +124,15 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
         return this.updateById(data);
     }
 
+    /**
+     * 根据数据ID和登录ID查找数据对象
+     * 此方法用于从数据访问层获取特定的数据对象，确保只有登录用户有权限访问
+     *
+     * @param dataId  数据对象的唯一标识符
+     * @param loginId 当前登录用户的唯一标识符
+     * @return 返回找到的数据对象，如果未找到则返回null
+     */
+    public Data findById(Long dataId, Long loginId) {
+        return this.dataMapper.findById(dataId, loginId);
+    }
 }

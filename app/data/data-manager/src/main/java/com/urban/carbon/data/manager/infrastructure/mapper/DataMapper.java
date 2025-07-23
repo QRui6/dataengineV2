@@ -14,4 +14,13 @@ public interface DataMapper extends BaseMapper<Data> {
      * @return 查询结果
      */
     Data findByFileId(String fileId);
+
+    /**
+     * 根据dataId查询数据
+     *
+     * @param dataId 数据ID
+     * @param loginId 登录用户ID
+     * @return 查询结果
+     */
+    Data findById(Long dataId, Long loginId);
 }

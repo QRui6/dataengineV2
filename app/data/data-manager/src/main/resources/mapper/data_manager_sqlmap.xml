@@ -28,4 +28,12 @@
     FROM "public"."data_info"
     WHERE "deleted" = 0 AND "file_id" = #{fileId} AND "status" = 'INITIALIZED';
   </select>
+
+  <select id="findById" resultMap="BaseResultMap">
+    SELECT *
+    FROM "public"."data_info"
+    WHERE "deleted" = 0 AND "id" = #{dataId}
+      AND "user_id" = #{loginId} AND "status" = 'COMPLETED';
+  </select>
+
 </mapper>

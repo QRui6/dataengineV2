@@ -24,6 +24,10 @@ import com.urban.carbon.data.manager.domain.service.DataService;
 import com.urban.carbon.data.manager.domain.service.FileService;
 import com.urban.carbon.rpc.facade.Facade;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 @DubboService(version = "1.0.0")
 public class DataFacadeServiceImpl implements DataFacadeService {
@@ -86,6 +90,7 @@ public class DataFacadeServiceImpl implements DataFacadeService {
 
     @Override
     @Facade
+    @Transactional(rollbackFor = Exception.class)
     public OperateResponse<UploadChunkInfo> uploadChunk(UploadChunkRequest request) {
         Data data = dataService.findByFileId(request.getFileId());
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
@@ -100,6 +105,7 @@ public class DataFacadeServiceImpl implements DataFacadeService {
 
     @Override
     @Facade
+    @Transactional(rollbackFor = Exception.class)
     public OperateResponse<UploadStatusInfo> mergeChunks(MergeRequest request) {
         String uploadId = request.getUploadId();
         // 查询是否存在该数据
@@ -131,6 +137,8 @@ public class DataFacadeServiceImpl implements DataFacadeService {
     }
 
     @Override
+    @Facade
+    @Transactional(rollbackFor = Exception.class)
     public OperateResponse<DataInfo> cancelUpload(MergeRequest request) {
         String uploadId = request.getUploadId();
         // 查询是否存在该数据
@@ -149,5 +157,19 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         return response;
     }
 
+    @Override
+    public void downloadFile(String filePath, String saveSoft, OutputStream outputStream) throws IOException {
+        fileService.downloadFile(filePath, saveSoft, outputStream);
+    }
+
+    @Override
+    public QueryResponse<DataInfo> findById(Long dataId, Long loginId) {
+        Data data = dataService.findById(dataId, loginId);
+        Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
+        QueryResponse<DataInfo> response = new QueryResponse<>();
+        response.setSuccess(true);
+        response.setData(DataConvertor.INSTANCE.mapToVo(data));
+        return response;
+    }
 
 }

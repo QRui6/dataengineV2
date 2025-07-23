@@ -20,6 +20,7 @@ subprojects { subproject ->
   apply plugin: 'java-library'
   apply plugin: 'io.spring.dependency-management'
   apply plugin: 'org.springframework.boot'
+
   // 配置仓库地址：Gradle 会从这些仓库下载依赖
   repositories {
     // 本地 flatDir 仓库，通常用于放置第三方或本地 jar 包
