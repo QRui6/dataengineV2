@@ -1,6 +1,6 @@
 package com.urban.carbon.api.data.manager.response.data;
 
-import com.urban.carbon.api.upload.constants.FileUploadStatus;
+import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
 import lombok.*;
 
 import java.io.Serial;
@@ -42,10 +42,10 @@ public class UploadChunkInfo implements Serializable {
      * @param chunkIndex 分片索引
      * @param received 是否接收成功
      */
-    public void extracted(String fileId, Integer chunkIndex, boolean received) {
+    public void extracted(String fileId, Integer chunkIndex, boolean received, FileUploadStatus status) {
         this.setFileId(fileId);
         this.setChunkIndex(chunkIndex);
         this.setReceived(received);
-        this.setStatus(FileUploadStatus.UPLOADING);
+        this.setStatus(status);
     }
 }

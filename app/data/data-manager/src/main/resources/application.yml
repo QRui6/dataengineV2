@@ -13,4 +13,4 @@ dubbo:
     qos-port: 22223
 
 server:
-  port: 8088
+  port: 8085

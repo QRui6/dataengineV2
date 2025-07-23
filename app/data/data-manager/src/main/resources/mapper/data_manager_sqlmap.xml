@@ -22,4 +22,10 @@
     <result column="DELETED" property="deleted" />
     <result column="LOCK_VERSION" property="lockVersion" />
   </resultMap>
+
+  <select id="findByFileId" resultMap="BaseResultMap">
+    SELECT *
+    FROM "public"."data_info"
+    WHERE "deleted" = 0 AND "file_id" = #{fileId} AND "status" = 'INITIALIZED';
+  </select>
 </mapper>

@@ -8,21 +8,6 @@ public enum FileUploadStatus {
     INITIALIZED,
 
     /**
-     * 上传中
-     */
-    UPLOADING,
-
-    /**
-     * 等待合并
-     */
-    WAITING_FOR_MERGE,
-
-    /**
-     * 合并中
-     */
-    MERGING,
-
-    /**
      * 上传完成
      */
     COMPLETED,
@@ -33,9 +18,9 @@ public enum FileUploadStatus {
     FAILED,
 
     /**
-     * 重试
+     * 上传中
      */
-    NEED_RETRY,
+    UPLOADING,
 
     /**
      * 取消

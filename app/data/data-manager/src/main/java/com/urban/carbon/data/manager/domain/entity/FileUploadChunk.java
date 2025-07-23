@@ -34,14 +34,9 @@ public class FileUploadChunk extends BaseEntity {
     private Long chunkSize;
 
     /**
-     * 分片状态（0-未上传，1-上传中，2-失败，3-成功）
+     * 分片状态
      */
-    private Integer status;
-
-    /**
-     * 上传时间
-     */
-    private Date uploadTime;
+    private String status;
 
     /**
      * 分片的 MD5 校验值
@@ -49,12 +44,27 @@ public class FileUploadChunk extends BaseEntity {
     private String md5;
 
     /**
-     * 分片存储路径
-     */
-    private String serverPath;
-
-    /**
      * 上传失败重试次数
      */
-    private Short retryCount;
+    private Integer retryCount;
+
+    /**
+     * 创建分片上传记录
+     *
+     * @param fileId 文件唯一标识
+     * @param chunkIndex 分片索引（从 0 开始）
+     * @param chunkSize 分片大小（可能小于 chunk_size )
+     * @param status 分片状态
+     * @param hashMD5 分片的 MD5 校验值
+     * @param retryCount 上传失败重试次数
+     */
+    public void recordChunk(String fileId, Integer chunkIndex, Long chunkSize, String status,
+                            String hashMD5, Integer retryCount) {
+        this.fileId = fileId;
+        this.chunkIndex = chunkIndex;
+        this.chunkSize = chunkSize;
+        this.status = status;
+        this.md5 = hashMD5;
+        this.retryCount = retryCount;
+    }
 }

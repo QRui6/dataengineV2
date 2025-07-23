@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.urban.carbon.data.manager.infrastructure.mapper.FileUploadChunkMapper">
+
+  <resultMap id="FileUploadChunkMap" type="com.urban.carbon.data.manager.domain.entity.FileUploadChunk">
+    <id column="ID" property="id"/>
+    <result column="FILE_ID" property="fileId"/>
+    <result column="CHUNK_INDEX" property="chunkIndex"/>
+    <result column="CHUNK_SIZE" property="chunkSize"/>
+    <result column="STATUS" property="status"/>
+    <result column="MD5" property="md5"/>
+    <result column="RETRY_COUNT" property="retryCount"/>
+    <result column="GMT_CREATE" property="gmtCreate" />
+    <result column="GMT_MODIFIED" property="gmtModified" />
+    <result column="DELETED" property="deleted" />
+    <result column="LOCK_VERSION" property="lockVersion" />
+  </resultMap>
+
+  <select id="findByFileId" resultMap="FileUploadChunkMap">
+    SELECT *
+    FROM "public"."file_upload_chunk"
+    WHERE "file_id" = #{fileId} AND "deleted" = 0;
+  </select>
+
+  <select id="allCompleted" resultType="java.lang.Integer">
+    SELECT "chunk_index"
+    FROM "public"."file_upload_chunk"
+    WHERE "file_id" = #{uploadId} AND
+          "status" = 'COMPLETED' AND
+          "deleted" = 0;
+  </select>
+
+  <select id="findByFileIdAndIndex" resultMap="FileUploadChunkMap">
+    SELECT *
+    FROM "public"."file_upload_chunk"
+    WHERE "file_id" = #{fileId} AND
+          "chunk_index" = #{chunkIndex} AND
+          "deleted" = 0;
+  </select>
+
+  <delete id="clear">
+    DELETE FROM "public"."file_upload_chunk"
+    WHERE "file_id" = #{uploadId} AND
+          "deleted" = 0;
+  </delete>
+
+</mapper>

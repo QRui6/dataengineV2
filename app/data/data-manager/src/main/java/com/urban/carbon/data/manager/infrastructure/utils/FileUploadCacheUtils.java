@@ -36,14 +36,12 @@ public class FileUploadCacheUtils {
      * 初始化缓存
      *
      * @param fileId 文件 ID
-     * @param dataName 文件名
-     * @param dataDesc 文件描述
      * @param chunkSize 分块大小
      * @param totalChunks 总分块数
      * @param fileSize 文件大小
      * @param saveSoft 保存方式
      */
-    public void initCache(String fileId, String dataName, String dataDesc, Long chunkSize,
+    public void initCache(String fileId, Long chunkSize,
                           Long totalChunks, Long fileSize, SaveSoftType saveSoft) {
         String fileKey = CacheConstant.FILE_CACHE_KEY_PREFIX + fileId;
         // 设置 Bitset
@@ -51,7 +49,7 @@ public class FileUploadCacheUtils {
         bitSet.set(new BitSet((int) (totalChunks * 2)));
         // 设置缓存数据
         UploadCache cacheData = new UploadCache();
-        cacheData.createCache(dataName, dataDesc, chunkSize, totalChunks, fileSize, saveSoft);
+        cacheData.createCache(chunkSize, totalChunks, fileSize, saveSoft);
         RBucket<UploadCache> bucket = redissonClient.getBucket(fileKey + ":info");
         bucket.set(cacheData);
     }

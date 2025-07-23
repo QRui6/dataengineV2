@@ -9,6 +9,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -87,7 +88,7 @@ public class HDFSFileStrategy implements FileStrategy {
             }
             // 将本地文件上传到 HDFS
             fileSystem.copyFromLocalFile(srcPath, dstPath);
-            log.info("File uploaded successfully to HDFS: {}", filePath);
+            log.info("File uploaded successfully to HDFS: {}", dstPath);
             return dstPath.toString();
         } catch (IOException e) {
             log.error("Failed to upload file to HDFS: {}", e.getMessage());
@@ -151,9 +152,8 @@ public class HDFSFileStrategy implements FileStrategy {
      */
     private Path getTargetPath(String filePath) {
         String fileWithType = filePath.substring(
-                filePath.lastIndexOf("/") + 1);
-        return Path.mergePaths(new Path(hdfsProperties.getBasePath()),
-                new Path(fileWithType));
+                filePath.lastIndexOf(File.separator) + 1);
+        return new Path(hdfsProperties.getBasePath() + "/" + fileWithType);
     }
 
     /**

@@ -1,2 +1,4 @@
 com.urban.carbon.api.data.source.request.DataSourceIdQueryCondition
 com.urban.carbon.api.data.source.request.DataSourceNameQueryCondition
+com.urban.carbon.api.data.source.exception.DataSourceException
+com.urban.carbon.api.data.source.exception.DataSourceErrorCode

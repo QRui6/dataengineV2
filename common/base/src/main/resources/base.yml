@@ -32,7 +32,7 @@ urban:
     # 文件存储的配置
     file:
       # 切片大小
-      slice: "16MB"
+      slice: "8MB"
       # 单个文件最大尺寸
       totalMaxSize: "5GB"
       # 配置存储到本地文件系统或者存储到HDFS的阈值

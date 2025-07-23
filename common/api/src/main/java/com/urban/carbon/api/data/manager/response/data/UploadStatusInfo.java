@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,7 +32,7 @@ public class UploadStatusInfo implements Serializable {
     /**
      * 总分片数
      */
-    private Long totalChunks;
+    private Integer totalChunks;
 
     /**
      * 状态
@@ -78,24 +79,55 @@ public class UploadStatusInfo implements Serializable {
      */
     private List<Integer> failedChunks;
 
-    public void buildResponse(String fileId, Long totalChunks, String dataName, String dataDesc,
+    /**
+     * 构建文件上传的响应信息
+     *
+     * @param fileId         文件ID，用于唯一标识一个文件
+     * @param totalChunks    文件总共需要上传的块数
+     * @param dataName       文件名称
+     * @param dataDesc       文件描述
+     * @param fileSize       文件大小
+     * @param saveSoftType   文件保存的软类型，可能是指文件的某种分类或标签
+     * @param dataType       文件类型，例如文档、图片等
+     * @param uploadedChunks 已经成功上传的文件块的列表
+     * @param filePath       文件在服务器上的保存路径
+     * @param canceled       表示文件上传是否已被取消
+     */
+    public void buildResponse(String fileId, Integer totalChunks, String dataName, String dataDesc,
                               Long fileSize, SaveSoftType saveSoftType, String dataType,
                               List<Integer> uploadedChunks, String filePath, Boolean canceled) {
+        // 初始化文件上传响应的基本信息
         this.fileId = fileId;
         this.uploadedChunks = uploadedChunks;
         this.totalChunks = totalChunks;
+        // 初始化失败块列表为空
+        this.failedChunks = new ArrayList<>();
+
+        // 根据上传状态设置文件上传的状态和进度
         if (canceled) {
+            // 如果上传被取消，设置状态为已取消，进度为0
             this.status = FileUploadStatus.CANCELED;
             this.progress = 0.;
         } else {
             if (uploadedChunks.size() == totalChunks) {
+                // 如果所有块都已上传，设置状态为完成，进度为100%
                 this.status = FileUploadStatus.COMPLETED;
                 this.progress = 100.0;
             } else {
+                // 如果部分块已上传，设置状态为上传中，并计算当前上传进度
                 this.status = FileUploadStatus.UPLOADING;
-                this.progress = (uploadedChunks.size() * 100.0 / totalChunks) ;
+                this.progress = (uploadedChunks.size() * 100.0 / totalChunks);
+
+                // 检查并记录未成功上传的块（失败块）
+                for (int i = 0; i < totalChunks; i++) {
+                    if (!uploadedChunks.contains(i)) {
+                        this.failedChunks.add(i);
+                    }
+                }
             }
         }
+
+        // 设置文件的附加信息
         this.dataName = dataName;
         this.dataDesc = dataDesc;
         this.filePath = filePath;

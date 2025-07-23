@@ -10,7 +10,7 @@ spring:
         savePath: ${urban.carbon.file.local.savePath}
       hdfsFileSystem:
         enabled: ${urban.carbon.file.hdfs.enabled}
-        basePath: ${urban.carbon.file.hdfs.enabled}
+        basePath: ${urban.carbon.file.hdfs.basePath}
         savePath: ${urban.carbon.file.hdfs.savePath}
         hdfsHost: ${urban.carbon.file.hdfs.hdfsHost}
         hdfsPort: ${urban.carbon.file.hdfs.hdfsPort}
@@ -23,11 +23,11 @@ spring:
         minioPort: ${urban.carbon.file.minio.port}
         minioUser: ${urban.carbon.file.minio.user}
         minioPassword: ${urban.carbon.file.minio.password}
-    # 大文件上传配置
-    servlet:
-      multipart:
-        max-file-size: ${urban.carbon.file.max-file-size}
-        max-request-size: ${urban.carbon.file.max-request-size}
+  # 大文件上传配置
+  servlet:
+    multipart:
+      max-file-size: ${urban.carbon.file.max-file-size}
+      max-request-size: ${urban.carbon.file.max-request-size}
 
 # tomcat 配置
 server:

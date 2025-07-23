@@ -6,4 +6,12 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface DataMapper extends BaseMapper<Data> {
+
+    /**
+     * 根据fileId查询数据
+     *
+     * @param fileId 文件ID
+     * @return 查询结果
+     */
+    Data findByFileId(String fileId);
 }

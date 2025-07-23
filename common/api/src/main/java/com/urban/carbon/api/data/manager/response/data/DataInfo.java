@@ -16,6 +16,11 @@ public class DataInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 文件id
+     */
+    private String fileId;
+
+    /**
      * 数据源名称
      */
     private String dataSourceName;

@@ -10,4 +10,10 @@ dependencies {
   implementation(project(":common:web"))
   implementation(project(":common:skywalking"))
   implementation(project(":common:file"))
+
+  // test 框架
+  testImplementation(libs.junit)
+  testImplementation(libs.spring.test)
+  testCompileOnly(libs.mapstruct)
+  testAnnotationProcessor(libs.mapstruct.processor)
 }

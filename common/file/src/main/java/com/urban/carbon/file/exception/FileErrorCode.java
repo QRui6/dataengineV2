@@ -84,7 +84,12 @@ public enum FileErrorCode implements ErrorCode {
     /**
      * 上传初始化失败
      */
-    UPLOAD_INIT_ERROR("UPLOAD_INIT_ERROR", "上传初始化失败");
+    UPLOAD_INIT_ERROR("UPLOAD_INIT_ERROR", "上传初始化失败"),
+
+    /**
+     * MD5 校验失败
+     */
+    MD5_CHECK_FAILED("MD5_CHECK_FAILED", "MD5校验失败");
 
     private final String code;
 

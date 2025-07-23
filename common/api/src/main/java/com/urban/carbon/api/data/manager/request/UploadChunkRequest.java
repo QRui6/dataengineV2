@@ -23,6 +23,16 @@ public class UploadChunkRequest extends BaseRequest {
     private Integer chunkIndex;
 
     /**
+     * 文件大小
+     */
+    private Long fileSize;
+
+    /**
+     * 分片大小
+     */
+    private Long chunkSize;
+
+    /**
      * 文件
      */
     private InputStream fileInputStream;

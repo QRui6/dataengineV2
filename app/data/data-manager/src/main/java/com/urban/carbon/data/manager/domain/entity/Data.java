@@ -56,14 +56,24 @@ public class Data extends BaseEntity {
     private Integer totalChunks;
 
     /**
+     * 文件大小（字节）
+     */
+    private Long fileSize;
+
+    /**
      * 存储策略（如 MINIO、HDFS）
      */
     private String saveSoft;
 
     /**
-     * 上传状态（0-初始化，1-上传中，2-完成，3-失败）
+     * 上传状态
      */
     private String status;
+
+    /**
+     * 文件路径
+     */
+    private String filePath;
 
     /**
      * 数据源名称
@@ -71,20 +81,21 @@ public class Data extends BaseEntity {
     @TableField(exist = false)
     private String dataSourceName;
 
-    public void initCreate(String fileId, Long userId, Long dataSourceId, String name,
-                           String description, String dataType, Long chunkSize, Integer totalChunks,
+    public void initCreate(String fileId, Long userId, Long dataSourceId, String name, String description,
+                           String dataType, Long chunkSize, Integer totalChunks, Long fileSize,
                            SaveSoftType saveSoft, FileUploadStatus status, String dataSourceName) {
-    this.fileId = fileId;
-    this.userId = userId;
-    this.dataSourceId = dataSourceId;
-    this.name = name;
-    this.description = description;
-    this.type = dataType;
-    this.chunkSize = chunkSize;
-    this.totalChunks = totalChunks;
-    this.saveSoft = saveSoft.name();
-    this.status = status.name();
-    this.dataSourceName = dataSourceName;
-}
+        this.fileId = fileId;
+        this.userId = userId;
+        this.dataSourceId = dataSourceId;
+        this.name = name;
+        this.description = description;
+        this.type = dataType;
+        this.chunkSize = chunkSize;
+        this.totalChunks = totalChunks;
+        this.fileSize = fileSize;
+        this.saveSoft = saveSoft.name();
+        this.status = status.name();
+        this.dataSourceName = dataSourceName;
+    }
 
 }
