@@ -31,6 +31,7 @@ public interface FileStrategy {
 
     /**
      * 将指定路径的临时文件或分片上传到目标存储系统
+     * TODO 文件写入耗费性能严重，开启一个虚拟线程用于文件写入
      *
      * @param filePath 本地文件路径（或临时分片路径）
      * @return 是否上传成功

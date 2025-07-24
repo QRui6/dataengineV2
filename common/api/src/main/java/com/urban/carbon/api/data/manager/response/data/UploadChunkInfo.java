@@ -37,15 +37,21 @@ public class UploadChunkInfo implements Serializable {
     private FileUploadStatus status;
 
     /**
+     * 进度
+     */
+    private Double progress;
+
+    /**
      * 分片上传信息
      * @param fileId 文件唯一标识
      * @param chunkIndex 分片索引
      * @param received 是否接收成功
      */
-    public void extracted(String fileId, Integer chunkIndex, boolean received, FileUploadStatus status) {
-        this.setFileId(fileId);
-        this.setChunkIndex(chunkIndex);
-        this.setReceived(received);
-        this.setStatus(status);
+    public void extracted(String fileId, Integer chunkIndex, boolean received,
+                          FileUploadStatus status) {
+        this.fileId = fileId;
+        this.chunkIndex = chunkIndex;
+        this.received = received;
+        this.status = status;
     }
 }

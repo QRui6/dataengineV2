@@ -15,7 +15,7 @@ public interface FileUploadChunkMapper extends BaseMapper<FileUploadChunk> {
      * @param fileId 文件ID
      * @return 分片信息
      */
-    FileUploadChunk findByFileId(String fileId);
+    List<FileUploadChunk> findByFileId(String fileId);
 
     /**
      * 根据上传ID查询所有分片信息

@@ -21,6 +21,7 @@ import com.urban.carbon.lock.DistributeLock;
 import com.urban.carbon.data.manager.infrastructure.mapper.FileUploadChunkMapper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,6 +35,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -65,15 +68,21 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
     private final FileUploadChunkMapper fileUploadChunkMapper;
 
     /**
+     * Redis 客户端
+     */
+    private final StringRedisTemplate stringRedisTemplate;
+
+    /**
      * 构造方法
      *
      * @param fileStrategyFactory 文件策略工厂
      */
     public FileService(FileStrategyFactory fileStrategyFactory, FileProperties fileProperties,
-                       FileUploadChunkMapper fileUploadChunkMapper) {
+                       FileUploadChunkMapper fileUploadChunkMapper, StringRedisTemplate stringRedisTemplate) {
         this.fileStrategyFactory = fileStrategyFactory;
         this.fileProperties = fileProperties;
         this.fileUploadChunkMapper = fileUploadChunkMapper;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**
@@ -130,8 +139,14 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
                 chunkSize, fileSize, hashMD5);
         // 创建一个对象来存储上传分片的信息
         UploadChunkInfo info = new UploadChunkInfo();
+        // 查询当前文件块的记录
+        List<FileUploadChunk> chunks = fileUploadChunkMapper.findByFileId(
+                chunk.getFileId());
+        boolean uploadResult = this.saveOrUpdate(chunk);
+        // 计算进度
+        info.setProgress(chunks.size() * 100.0 / request.getTotalChunks());
         // 将数据库中的信息转换成 UploadChunkInfo
-        info.extracted(chunk.getFileId(), chunk.getChunkIndex(), this.saveOrUpdate(chunk),
+        info.extracted(chunk.getFileId(), chunk.getChunkIndex(), uploadResult,
                 FileUploadStatus.valueOf(chunk.getStatus()));
         // 返回包含上传分片信息的对象
         return info;
@@ -174,7 +189,9 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
             // 将文件上传到指定位置
             filePath = uploadFileToDataStore(uploadId, saveSoftType);
             // 删除临时文件
-            deleteTmpFile(uploadId);
+            Boolean deleteResult = deleteTmpFile(uploadId);
+            Assert.isTrue(deleteResult, () -> new FileException("Delete Tmp File Failed!",
+                    FileErrorCode.FILE_UPLOAD_FAILED));
         }
         // 构建上传状态信息
         response.buildResponse(uploadId, data.getTotalChunks(), data.getName(), data.getDescription(),
@@ -204,14 +221,56 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
         return response;
     }
 
+    private void waitForLockRelease(String uploadId) {
+        // 匹配上传或者完成操作两个场景
+        String pattern = "*" + uploadId + "*";
+        int retryCount = 0;
+        int maxRetries = 5;
+        long waitTime = 200;
+
+        while (true) {
+            Set<String> keys = stringRedisTemplate.keys(pattern);
+            if (!keys.isEmpty()) {
+                if (++retryCount >= maxRetries) {
+                    throw new FileException("等待锁释放超时，请稍后重试",
+                            FileErrorCode.FILE_DELETE_FAILED);
+                }
+                try {
+                    TimeUnit.MILLISECONDS.sleep(waitTime);
+                } catch (InterruptedException e) {
+                    log.warn("Wait for lock...");
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
+
+    /**
+     * 取消文件上传
+     * 此方法用于取消一个正在进行的文件上传任务它首先从数据库中清除与上传ID相关的所有数据，
+     * 然后删除相关的临时文件如果任何一个步骤失败，将抛出异常
+     *
+     * @param uploadId 上传任务的唯一标识符
+     * @return 如果上传任务取消成功，则返回true
+     * @throws FileException 如果文件删除失败，则抛出文件异常
+     */
     public Boolean cancelUpload(String uploadId) {
+        // TODO 这里我们可以扫描Redis中是否存在锁，来解决脏数据的问题
+        waitForLockRelease(uploadId);
         // 清空表格中关于 uploadId 的数据
-        this.fileUploadChunkMapper.clear(uploadId);
+        Boolean clearResult = this.fileUploadChunkMapper.clear(uploadId);
+        // 确保数据清除成功，否则抛出文件删除失败异常
+        Assert.isTrue(clearResult, () -> new FileException(FileErrorCode.FILE_DELETE_FAILED));
         // 删除临时文件
-        deleteTmpFile(uploadId);
+        Boolean deleteResult = deleteTmpFile(uploadId);
+        // 确保临时文件删除成功，否则抛出文件删除失败异常
+        Assert.isTrue(deleteResult, () -> new FileException(FileErrorCode.FILE_DELETE_FAILED));
         // 返回成功
         return true;
     }
+
 
     /**
      * 下载文件到指定的输出流
@@ -285,7 +344,8 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
 
 
     /**
-     * 将数据块存储到文件系统中<p>
+     * 将数据块存储到文件系统中
+     * <p>
      * 该方法负责将一个给定的数据块（通过InputStream表示）写入到文件系统中的指定位置
      * 它主要用于处理大文件上传时的分块存储，每个数据块对应文件的一个部分
      *
@@ -359,7 +419,7 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
      *
      * @param fileId 文件ID
      */
-    private void deleteTmpFile(String fileId) {
+    private Boolean deleteTmpFile(String fileId) {
         Path path = Paths.get(TEMP_PATH, fileId);
         if (Files.exists(path)) {
             try {
@@ -369,6 +429,7 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
                 throw new FileException(e, FileErrorCode.FILE_DELETE_FAILED);
             }
         }
+        return true;
     }
 
     /**

@@ -43,6 +43,11 @@ public class UploadChunkRequest extends BaseRequest {
     private String hashMD5;
 
     /**
+     * 总分片数
+     */
+    private Integer totalChunks;
+
+    /**
      * 创建上传分片请求
      *
      * @param fileId 文件唯一标识

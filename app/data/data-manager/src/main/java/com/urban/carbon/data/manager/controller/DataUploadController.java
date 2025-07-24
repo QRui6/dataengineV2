@@ -1,6 +1,6 @@
 package com.urban.carbon.data.manager.controller;
 
-// import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.StpUtil;
 import com.urban.carbon.api.data.manager.request.DataCreateRequest;
 import com.urban.carbon.api.data.manager.request.MergeRequest;
 import com.urban.carbon.api.data.manager.request.UploadChunkRequest;
@@ -10,7 +10,7 @@ import com.urban.carbon.api.data.manager.response.data.UploadStatusInfo;
 import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.QueryResponse;
-import com.urban.carbon.data.manager.domain.service.DataService;
+import com.urban.carbon.data.manager.infrastructure.utils.UploadProgressWebSocketHandler;
 import com.urban.carbon.data.manager.params.DataCreateParams;
 import com.urban.carbon.web.vo.Result;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,14 +23,28 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 @RestController
-@RequestMapping("/api/data")
-public class DataManagerController {
+@RequestMapping("/api/data/upload")
+public class DataUploadController {
 
+    /**
+     * 文件上传 Facade 接口
+     */
     private final DataFacadeService dataFacadeService;
 
+    /**
+     * 上传进度 WebSocket 处理器
+     */
+    private final UploadProgressWebSocketHandler uploadProgressWebSocketHandler;
 
-    public DataManagerController(DataFacadeService dataFacadeService, DataService dataService) {
+    /**
+     * 构造函数
+     *
+     * @param dataFacadeService 文件上传 Facade 接口
+     */
+    public DataUploadController(DataFacadeService dataFacadeService,
+                                UploadProgressWebSocketHandler uploadProgressWebSocketHandler) {
         this.dataFacadeService = dataFacadeService;
+        this.uploadProgressWebSocketHandler = uploadProgressWebSocketHandler;
     }
 
     @GetMapping("/test")
@@ -38,10 +52,9 @@ public class DataManagerController {
         return "test";
     }
 
-    @PostMapping("/upload/init")
+    @PostMapping("/init")
     public Result<DataInfo> initCreateDataInfo(@RequestBody DataCreateParams params) {
-//        String loginId = (String) StpUtil.getLoginId();
-        String loginId = "45";
+        String loginId = (String) StpUtil.getLoginId();
         DataCreateRequest request = new DataCreateRequest();
         request.createRequest(params.getFilename(), params.getDataDesc(), params.getSize(),
                 params.getType(), params.getDataSourceId(), Long.valueOf(loginId));
@@ -49,48 +62,57 @@ public class DataManagerController {
         return Result.success(response.getData());
     }
 
-    @PostMapping("/upload/chunk")
+    @PostMapping("/chunk")
     public Result<UploadChunkInfo> uploadChunk(
             @RequestParam("file") MultipartFile file, @RequestParam String chunkHash,
             @RequestParam Integer index, @RequestParam String uploadId) throws IOException {
+        String loginId = (String) StpUtil.getLoginId();
         UploadChunkRequest request = new UploadChunkRequest();
         request.createRequest(uploadId, index, file.getInputStream(), chunkHash);
-        request.setLoginId(Long.valueOf("45"));
+        request.setLoginId(Long.valueOf(loginId));
+        // 调用更新接口
         OperateResponse<UploadChunkInfo> response = dataFacadeService.uploadChunk(request);
-        return Result.success(response.getData());
+        UploadChunkInfo data = response.getData();
+        // 发送上传进度更新
+        uploadProgressWebSocketHandler.sendProgressUpdate(data.getFileId(),
+                String.format("%02f", data.getProgress()));
+        return Result.success(data);
     }
 
-    @PostMapping("/upload/merge")
+    @PostMapping("/merge")
     public Result<UploadStatusInfo> mergeChunks(@NotBlank String uploadId) {
+        String loginId = (String) StpUtil.getLoginId();
         MergeRequest request = new MergeRequest();
         request.setUploadId(uploadId);
-        request.setLoginId(Long.valueOf("45"));
+        request.setLoginId(Long.valueOf(loginId));
         OperateResponse<UploadStatusInfo> statusInfo = dataFacadeService.mergeChunks(request);
         return Result.success(statusInfo.getData());
     }
 
-    @GetMapping("/upload/status")
+    @GetMapping("/status")
     public Result<UploadStatusInfo> getUploadStatus(@NotBlank String uploadId) {
+        String loginId = (String) StpUtil.getLoginId();
         MergeRequest request = new MergeRequest();
         request.setUploadId(uploadId);
-        request.setLoginId(Long.valueOf("45"));
+        request.setLoginId(Long.valueOf(loginId));
         QueryResponse<UploadStatusInfo> response = dataFacadeService.getUploadStatus(request);
         return Result.success(response.getData());
     }
 
-    @PostMapping("/upload/cancel")
+    @PostMapping("/cancel")
     public Result<DataInfo> cancelUpload(@NotBlank String uploadId) {
         // TODO 并发上传时，点击取消，会产生脏数据，考虑如何进行修改。
+        String loginId = (String) StpUtil.getLoginId();
         MergeRequest request = new MergeRequest();
         request.setUploadId(uploadId);
-        request.setLoginId(Long.valueOf("45"));
+        request.setLoginId(Long.valueOf(loginId));
         OperateResponse<DataInfo> response = dataFacadeService.cancelUpload(request);
         return Result.success(response.getData());
     }
 
-    @GetMapping("/upload/download")
+    @GetMapping("/download")
     public void downloadFile(@NotNull Long dataId, HttpServletResponse response) throws IOException {
-        String loginId = "45";
+        String loginId = (String) StpUtil.getLoginId();
         // 设置响应头
         response.setContentType("application/octet-stream");
         // 查询文件的名称与后缀名
