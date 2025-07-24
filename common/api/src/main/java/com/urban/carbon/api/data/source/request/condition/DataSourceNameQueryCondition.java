@@ -1,4 +1,4 @@
-package com.urban.carbon.api.data.source.request;
+package com.urban.carbon.api.data.source.request.condition;
 
 import com.urban.carbon.base.request.QueryCondition;
 import lombok.AllArgsConstructor;

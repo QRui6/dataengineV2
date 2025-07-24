@@ -47,6 +47,7 @@ dubbo-registry-nacos = { group = "org.apache.dubbo", name = "dubbo-registry-naco
 # spring web 相关依赖
 # spring-web = { group = "org.springframework", name = "spring-web", version.ref = "spring-web" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springboot" }
+spring-boot-starter-websocket = { group = "org.springframework.boot", name = "spring-boot-starter-websocket", version.ref = "springboot" }
 
 # spring boot 相关依赖
 spring-boot-parent = { group = "org.springframework.boot", name = "spring-boot-starter-parent", version.ref = "springboot" }

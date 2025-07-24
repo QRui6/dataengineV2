@@ -1,6 +1,7 @@
 package com.urban.carbon.data.manager.facade;
 
 import cn.hutool.core.lang.Assert;
+import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
 import com.urban.carbon.api.data.manager.exception.DataErrorCode;
 import com.urban.carbon.api.data.manager.exception.DataException;
 import com.urban.carbon.api.data.manager.request.DataCreateRequest;
@@ -94,8 +95,11 @@ public class DataFacadeServiceImpl implements DataFacadeService {
     public OperateResponse<UploadChunkInfo> uploadChunk(UploadChunkRequest request) {
         Data data = dataService.findByFileId(request.getFileId());
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
+        Assert.isTrue(data.getStatus().equals(FileUploadStatus.INITIALIZED.name()),
+                () -> new DataException(DataErrorCode.DATA_ALREADY_UPLOADED));
         request.setChunkSize(data.getChunkSize());
         request.setFileSize(data.getFileSize());
+        request.setTotalChunks(data.getTotalChunks());
         OperateResponse<UploadChunkInfo> response = new OperateResponse<>();
         UploadChunkInfo chunkInfo = fileService.handleChunkUpload(request);
         response.setSuccess(true);
@@ -111,7 +115,6 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         // 查询是否存在该数据
         Data data = dataService.findByFileId(uploadId);
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
-        // 查询分片表，是否所有的分片都已经上传，且全部为 COMPLETED
         OperateResponse<UploadStatusInfo> response = new OperateResponse<>();
         UploadStatusInfo statusInfo = fileService.mergeChunks(uploadId, data);
         if (dataService.uploadDataStatus(statusInfo.getFilePath(), data, request.getLoginId())) {
@@ -130,7 +133,9 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         Data data = dataService.findByFileId(uploadId);
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
         QueryResponse<UploadStatusInfo> response = new QueryResponse<>();
+        // 获取文件上传状态
         UploadStatusInfo statusInfo = fileService.getUploadStatus(request.getUploadId(), data);
+        // 设置响应值
         response.setSuccess(true);
         response.setData(statusInfo);
         return response;
@@ -145,10 +150,10 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         Data data = dataService.findByFileId(uploadId);
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
         OperateResponse<DataInfo> response = new OperateResponse<>();
-        // 首先，将 data 中的信息进行修改，将 status 修改为 CANCELED
+        // 首先，将 data 中的信息进行修改，将 status 修改为 CANCELED，阻止之后的访问继续上传接口
         // 随后，需要使用 fileService 的服务，清除所有 chunk，同时删除临时目录
-        // TODO 两个方法需要考虑加上某一种方法，因为并发上传时，点击取消，会产生脏数据。
-        if (dataService.cancelUploadData(data) && fileService.cancelUpload(uploadId)) {
+        if (dataService.cancelUploadData(data, request.getLoginId()) &&
+                fileService.cancelUpload(uploadId)) {
             response.setSuccess(true);
             response.setData(DataConvertor.INSTANCE.mapToVo(data));
         } else {
@@ -170,6 +175,12 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         response.setSuccess(true);
         response.setData(DataConvertor.INSTANCE.mapToVo(data));
         return response;
+    }
+
+    @Override
+    public int existsData(Long dsId) {
+        // TODO 实现查询是否存在数据的方法
+        return 0;
     }
 
 }

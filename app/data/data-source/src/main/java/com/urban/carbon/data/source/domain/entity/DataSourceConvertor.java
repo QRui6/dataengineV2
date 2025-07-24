@@ -2,9 +2,10 @@ package com.urban.carbon.data.source.domain.entity;
 
 import com.urban.carbon.api.data.source.response.data.DataSourceInfo;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface DataSourceConvertor {
@@ -21,4 +22,12 @@ public interface DataSourceConvertor {
      * @return 数据源信息
      */
     DataSourceInfo mapToVo(DataSource dataSource);
+
+    /**
+     * 数据源列表转换
+     *
+     * @param records 数据源列表
+     * @return 数据源信息列表
+     */
+    List<DataSourceInfo> mapToList(List<DataSource> records);
 }

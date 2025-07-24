@@ -19,7 +19,12 @@ public enum DataErrorCode implements ErrorCode {
     /**
      * 数据不存在
      */
-    DATA_NOT_FOUND("DATA_NOT_FOUND", "数据不存在");
+    DATA_NOT_FOUND("DATA_NOT_FOUND", "数据不存在"),
+
+    /**
+     * 数据已上传
+     */
+    DATA_ALREADY_UPLOADED("DATA_ALREADY_UPLOADED", "数据已上传");
 
     private final String code;
 

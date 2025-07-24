@@ -11,6 +11,10 @@ dependencies {
   implementation(project(":common:skywalking"))
   implementation(project(":common:file"))
 
+  // 引入WebSocket 依赖
+  implementation(libs.spring.boot.starter.websocket)
+  testImplementation(libs.spring.boot.starter.websocket)
+
   // test 框架
   testImplementation(libs.junit)
   testImplementation(libs.spring.test)

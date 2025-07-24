@@ -93,7 +93,9 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
     public Boolean uploadDataStatus(String filePath, Data data, Long loginId) {
         // 设置 data 中的信息
         data.setFilePath(filePath);
+        // 设置数据状态为完成
         data.setStatus(FileUploadStatus.COMPLETED.name());
+        // 设置修改时间
         data.setGmtModified(new Date());
         if (this.saveOrUpdate(data)) {
             // 插入操作记录
@@ -113,15 +115,27 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
      * 此方法用于在数据上传过程中取消上传操作它通过更新数据的状态和删除标记来实现取消操作
      *
      * @param data 要取消上传的数据对象
+     * @param loginId 当前登录用户的唯一标识符
      * @return 返回更新操作是否成功如果返回true，则表示取消操作成功；如果返回false，则表示取消操作失败
      */
-    public Boolean cancelUploadData(Data data) {
+    public Boolean cancelUploadData(Data data, Long loginId) {
         // 设置数据的上传状态为已取消
         data.setStatus(FileUploadStatus.CANCELED.name());
         // 标记数据为已删除，以逻辑删除的方式从数据库中移除该数据
         data.setDeleted(1);
+        // 设置修改时间
+        data.setGmtModified(new Date());
         // 调用updateById方法，根据数据的ID更新数据库中的记录
-        return this.updateById(data);
+        if (this.saveOrUpdate(data)) {
+            // 插入操作记录
+            Long insertStream = dataOperateStreamService.insertStream(
+                    data, loginId, DataOperateType.UPDATE);
+            // 确保操作记录插入成功
+            Assert.notNull(insertStream, () -> new DataException(
+                    DataErrorCode.DATA_OPERATE_STREAM_FAIL));
+            return true;
+        }
+        return false;
     }
 
     /**
