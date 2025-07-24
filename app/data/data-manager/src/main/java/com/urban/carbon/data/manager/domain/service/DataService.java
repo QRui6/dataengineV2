@@ -1,21 +1,30 @@
 package com.urban.carbon.data.manager.domain.service;
 
 import cn.hutool.core.lang.Assert;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.api.data.manager.constants.DataOperateType;
 import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
 import com.urban.carbon.api.data.manager.exception.DataErrorCode;
 import com.urban.carbon.api.data.manager.exception.DataException;
+import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import com.urban.carbon.api.data.manager.response.data.UploadInitInfo;
+import com.urban.carbon.base.response.OperateResponse;
+import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.data.manager.domain.entity.Data;
+import com.urban.carbon.data.manager.domain.entity.DataConvertor;
 import com.urban.carbon.data.manager.infrastructure.mapper.DataMapper;
 import jakarta.validation.constraints.NotNull;
+import jodd.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.*;
 
 @Service
 @Slf4j
@@ -148,5 +157,65 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
      */
     public Data findById(Long dataId, Long loginId) {
         return this.dataMapper.findById(dataId, loginId);
+    }
+
+    /**
+     * 查询数据源列表
+     *
+     * @param dsId 数据源 ID
+     * @return 查询结果
+     */
+    public PageResponse<DataInfo> queryDataList(String dataSourceName, Integer page, Integer pageSize, Long dsId) {
+        Page<Data> pageResult = this.page(new Page<>(page, pageSize),
+                new QueryWrapper<>(Data.class)
+                        .eq("ds_id", dsId)
+                        .orderByDesc("gmt_create")
+        );
+        List<DataInfo> dataInfos = DataConvertor.INSTANCE.mapToVoList(pageResult.getRecords());
+        for (DataInfo dataInfo : dataInfos) {
+            dataInfo.setDataSourceName(dataSourceName);
+        }
+        return PageResponse.of(dataInfos, (int) pageResult.getTotal(), pageSize, page);
+    }
+
+    /**
+     * 查询当前数据源中是否存在数据
+     *
+     * @param dsId 数据源ID
+     * @return 存在返回1，不存在返回0
+     */
+    public int existsData(Long dsId) {
+        return dataMapper.existsData(dsId);
+    }
+
+    public List<Long> deleteData(List<Long> ids) {
+        List<Long> dataSuccess;
+        if (ids.size() > 5) {
+            // 创建自定义线程池
+            ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
+                    .setNameFormat("delete-data-source-%d").get();
+            // 创建线程池并执行并行处理
+            try (ExecutorService pool = new ThreadPoolExecutor(
+                    5, 5, 0L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<>(), namedThreadFactory)) {
+                // 过滤出可以删除的数据源：数据不存在且删除成功的数据源
+                dataSuccess = ids.stream()
+                        .filter(id -> {
+                            try {
+                                return pool.submit(() -> this.existsData(id) == 0 &&
+                                        this.removeById(id)).get();
+                            } catch (InterruptedException | ExecutionException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }).toList();
+            }
+        } else {
+            // 数据源数量小于等于5时，使用普通串行方式处理
+            dataSuccess = ids.stream()
+                    .filter(id -> this.existsData(id) == 0 &&
+                            this.removeById(id))
+                    .toList();
+        }
+        return dataSuccess;
     }
 }

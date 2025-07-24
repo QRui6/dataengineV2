@@ -44,7 +44,7 @@ public class DataSourceOperateStreamService
         stream.setType(type.name());
         // 记录参数
 //        stream.setParam(dataSource.toString());
-        stream.setParam(dataSources.parallelStream()
+        stream.setParam(dataSources.stream()
                 .map(dataSource -> dataSource.getId() + ":" + dataSource.toString())
                 .toList()
                 .stream()

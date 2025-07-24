@@ -1,17 +1,17 @@
 package com.urban.carbon.api.data.manager.service;
 
-import com.urban.carbon.api.data.manager.request.DataCreateRequest;
-import com.urban.carbon.api.data.manager.request.MergeRequest;
-import com.urban.carbon.api.data.manager.request.UploadChunkRequest;
+import com.urban.carbon.api.data.manager.request.*;
 import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import com.urban.carbon.api.data.manager.response.data.UploadChunkInfo;
 import com.urban.carbon.api.data.manager.response.data.UploadStatusInfo;
 import com.urban.carbon.base.response.OperateResponse;
+import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.response.QueryResponse;
 import jakarta.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 public interface DataFacadeService {
 
@@ -80,4 +80,21 @@ public interface DataFacadeService {
      * @return 存在返回1，不存在返回0
      */
     int existsData(Long dsId);
+
+    /**
+     * 查询数据列表
+     *
+     * @param request 查询数据列表请求
+     * @return 查询结果
+     */
+    PageResponse<DataInfo> queryDataList(DataPageQueryRequest request);
+
+    /**
+     * 删除数据
+     *
+     * @param request 数据查询请求
+     * @param loginId 登录ID
+     * @return 删除结果
+     */
+    OperateResponse<List<Long>> deleteData(DataQueryRequest request, Long loginId);
 }

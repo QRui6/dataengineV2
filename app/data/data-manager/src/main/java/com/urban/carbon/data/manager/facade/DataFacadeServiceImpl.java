@@ -4,10 +4,9 @@ import cn.hutool.core.lang.Assert;
 import com.urban.carbon.api.data.manager.constants.FileUploadStatus;
 import com.urban.carbon.api.data.manager.exception.DataErrorCode;
 import com.urban.carbon.api.data.manager.exception.DataException;
-import com.urban.carbon.api.data.manager.request.DataCreateRequest;
-import com.urban.carbon.api.data.manager.request.MergeRequest;
-import com.urban.carbon.api.data.manager.request.UploadChunkRequest;
-import com.urban.carbon.api.data.manager.request.UploadInitRequest;
+import com.urban.carbon.api.data.manager.request.*;
+import com.urban.carbon.api.data.manager.request.condition.DataDSIdQueryCondition;
+import com.urban.carbon.api.data.manager.request.condition.DataIdsQueryCondition;
 import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import com.urban.carbon.api.data.manager.response.data.UploadChunkInfo;
 import com.urban.carbon.api.data.manager.response.data.UploadInitInfo;
@@ -17,6 +16,7 @@ import com.urban.carbon.api.data.source.request.DataSourceQueryRequest;
 import com.urban.carbon.api.data.source.response.data.DataSourceInfo;
 import com.urban.carbon.api.data.source.service.DataSourceFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
+import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.response.QueryResponse;
 import com.urban.carbon.base.utils.RandomNameGenerator;
 import com.urban.carbon.data.manager.domain.entity.Data;
@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 @DubboService(version = "1.0.0")
 public class DataFacadeServiceImpl implements DataFacadeService {
@@ -66,7 +67,8 @@ public class DataFacadeServiceImpl implements DataFacadeService {
     @Facade
     public OperateResponse<DataInfo> initCreateData(DataCreateRequest request) {
         // 调用 dataSource 来查询用户指定的数据源是否存在 ( RPC 远程调用 )
-        DataSourceQueryRequest queryRequest = new DataSourceQueryRequest(request.getDataSourceId(), request.getLoginId());
+        DataSourceQueryRequest queryRequest = new DataSourceQueryRequest(
+                request.getDataSourceId(), request.getLoginId());
         DataSourceInfo dataSourceInfo = dataSourceFacadeService.queryDataSource(queryRequest).getData();
         String fileId = RandomNameGenerator.generateRandomFileName(16, request.getDataType());
         // 初始化上传，调用 fileService 初始化方法
@@ -179,8 +181,34 @@ public class DataFacadeServiceImpl implements DataFacadeService {
 
     @Override
     public int existsData(Long dsId) {
-        // TODO 实现查询是否存在数据的方法
-        return 0;
+        return dataService.existsData(dsId);
+    }
+
+    @Override
+    public PageResponse<DataInfo> queryDataList(DataPageQueryRequest request) {
+        if (!(request.getCondition() instanceof DataDSIdQueryCondition)) {
+            throw new DataException(DataErrorCode.QUERY_CONDITION_NOT_SUPPORT);
+        }
+        DataSourceQueryRequest queryRequest = new DataSourceQueryRequest(
+                ((DataDSIdQueryCondition) request.getCondition()).getDsId(), request.getLoginId());
+        DataSourceInfo dsInfo = dataSourceFacadeService.queryDataSource(queryRequest).getData();
+        // 返回查询结果
+        return dataService.queryDataList(dsInfo.getDsName(), request.getCurrentPage(), request.getPageSize(),
+                ((DataDSIdQueryCondition) request.getCondition()).getDsId());
+    }
+
+    @Override
+    public OperateResponse<List<Long>> deleteData(DataQueryRequest request, Long loginId) {
+        if (!(request.getCondition() instanceof DataIdsQueryCondition)) {
+            throw new DataException(DataErrorCode.QUERY_CONDITION_NOT_SUPPORT);
+        }
+        List<Long> idsSuccess = dataService.deleteData(
+                ((DataIdsQueryCondition) request.getCondition()).getIds());
+
+        OperateResponse<List<Long>> response = new OperateResponse<>();
+        response.setSuccess(true);
+        response.setData(idsSuccess);
+        return response;
     }
 
 }

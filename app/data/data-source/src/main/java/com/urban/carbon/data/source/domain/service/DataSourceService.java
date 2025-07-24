@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.data.source.constants.DataSourceOperateType;
 import com.urban.carbon.api.data.source.exception.DataSourceErrorCode;
 import com.urban.carbon.api.data.source.exception.DataSourceException;
@@ -14,14 +13,11 @@ import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.data.source.domain.entity.DataSource;
 import com.urban.carbon.data.source.domain.entity.DataSourceConvertor;
 import com.urban.carbon.data.source.infrastructure.mapper.DataSourceMapper;
-import jodd.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 @Service
 public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource> {
@@ -37,21 +33,14 @@ public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource>
     private final DataSourceOperateStreamService dataSourceOperateStreamService;
 
     /**
-     * 数据服务
-     */
-    private final DataFacadeService dataFacadeService;
-
-    /**
      * 构造函数
      *
      * @param dataSourceMapper 数据源查询mapper
      */
     public DataSourceService(DataSourceMapper dataSourceMapper,
-                             DataSourceOperateStreamService dataSourceOperateStreamService,
-                             DataFacadeService dataFacadeService) {
+                             DataSourceOperateStreamService dataSourceOperateStreamService) {
         this.dataSourceMapper = dataSourceMapper;
         this.dataSourceOperateStreamService = dataSourceOperateStreamService;
-        this.dataFacadeService = dataFacadeService;
     }
 
     /**
@@ -131,14 +120,8 @@ public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource>
         return response;
     }
 
-    @Transactional
-    public OperateResponse<List<Long>> deleteDataSourceByIds(List<Long> dataSourceIds, Long loginId) {
+    public OperateResponse<List<Long>> getListOperateResponse(Long loginId, List<DataSource> dsSuccess) {
         OperateResponse<List<Long>> response = new OperateResponse<>();
-        // 检查是否所有的数据源都是存在的
-        List<DataSource> dsList = dataSourceMapper.findByIds(dataSourceIds, loginId);
-        Assert.equals(dsList.size(), dataSourceIds.size(),
-                () -> new DataSourceException(DataSourceErrorCode.DATA_SOURCE_NOT_EXISTS));
-        List<DataSource> dsSuccess = getDataSources(dataSourceIds, dsList);
         // 写操作记录
         if (!dsSuccess.isEmpty()) {
             Long streamResult = dataSourceOperateStreamService.insertStream(
@@ -153,44 +136,6 @@ public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource>
         }
         // 返回结果
         return response;
-    }
-
-    /**
-     * 根据数据源ID列表获取可以成功删除的数据源列表
-     *
-     * @param dataSourceIds 数据源ID列表，用于判断是否需要使用线程池处理
-     * @param dsList        待处理的数据源列表
-     * @return 可以成功删除的数据源列表
-     */
-    private List<DataSource> getDataSources(List<Long> dataSourceIds, List<DataSource> dsList) {
-        List<DataSource> dsSuccess;
-        if (dataSourceIds.size() > 5) {
-            // 创建自定义线程池
-            ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
-                    .setNameFormat("delete-data-source-%d").get();
-            // 创建线程池并执行并行处理
-            try (ExecutorService pool = new ThreadPoolExecutor(
-                    5, 5, 0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(), namedThreadFactory)) {
-                // 过滤出可以删除的数据源：数据不存在且删除成功的数据源
-                dsSuccess = dsList.stream()
-                        .filter(ds -> {
-                            try {
-                                return pool.submit(() -> dataFacadeService.existsData(ds.getId()) == 0 &&
-                                        dataSourceMapper.deleteById(ds) > 0).get();
-                            } catch (InterruptedException | ExecutionException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }).toList();
-            }
-        } else {
-            // 数据源数量小于等于5时，使用普通串行方式处理
-            dsSuccess = dsList.stream()
-                    .filter(ds -> dataFacadeService.existsData(ds.getId()) == 0 &&
-                            dataSourceMapper.deleteById(ds) > 0)
-                    .toList();
-        }
-        return dsSuccess;
     }
 
     /**
@@ -232,5 +177,16 @@ public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource>
         );
         return PageResponse.of(DataSourceConvertor.INSTANCE.mapToList(page.getRecords()),
                 (int) page.getTotal(), pageSize, currentPage);
+    }
+
+    /**
+     * 通过ID列表查询数据源
+     *
+     * @param dataSourceIds 数据源ID列表
+     * @param loginId 登录用户id
+     * @return 查询结果
+     */
+    public List<DataSource> findByIds(List<Long> dataSourceIds, Long loginId) {
+        return dataSourceMapper.findByIds(dataSourceIds, loginId);
     }
 }

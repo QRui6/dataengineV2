@@ -36,4 +36,10 @@
       AND "user_id" = #{loginId} AND "status" = 'COMPLETED';
   </select>
 
+  <select id="existsData" resultType="java.lang.Integer">
+    SELECT COUNT(*)
+    FROM "public"."data_info"
+    WHERE "deleted" = 0 AND "data_source_id" = #{dsId};
+  </select>
+
 </mapper>

@@ -1,6 +1,8 @@
 package com.urban.carbon.data.source.facade;
 
 import cn.hutool.core.lang.Assert;
+import com.urban.carbon.api.data.manager.request.condition.DataDSIdQueryCondition;
+import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.data.source.exception.DataSourceErrorCode;
 import com.urban.carbon.api.data.source.exception.DataSourceException;
 import com.urban.carbon.api.data.source.request.DataSourcePageQueryRequest;
@@ -18,9 +20,11 @@ import com.urban.carbon.data.source.domain.entity.DataSource;
 import com.urban.carbon.data.source.domain.entity.DataSourceConvertor;
 import com.urban.carbon.data.source.domain.service.DataSourceService;
 import com.urban.carbon.rpc.facade.Facade;
+import jodd.util.concurrent.ThreadFactoryBuilder;
 import org.apache.dubbo.config.annotation.DubboService;
 
 import java.util.List;
+import java.util.concurrent.*;
 
 @DubboService(version = "1.0.0")
 public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
@@ -30,8 +34,21 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
      */
     private final DataSourceService dataSourceService;
 
-    public DataSourceFacadeServiceImpl(DataSourceService dataSourceService) {
+    /**
+     * 数据服务
+     */
+    private final DataFacadeService dataFacadeService;
+
+    /**
+     * 构造函数
+     *
+     * @param dataSourceService 数据源服务
+     * @param dataFacadeService 数据服务
+     */
+    public DataSourceFacadeServiceImpl(DataSourceService dataSourceService,
+                                       DataFacadeService dataFacadeService) {
         this.dataSourceService = dataSourceService;
+        this.dataFacadeService = dataFacadeService;
     }
 
     @Override
@@ -68,11 +85,14 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
 
     @Override
     public OperateResponse<List<Long>> deleteDataSources(DataSourceQueryRequest request) {
-        if (!(request.getCondition() instanceof DataSourceIdsQueryCondition)) {
+        if (!(request.getCondition() instanceof DataSourceIdsQueryCondition condition)) {
             throw new DataSourceException(DataSourceErrorCode.QUERY_CONDITION_NOT_SUPPORT);
         }
-        return dataSourceService.deleteDataSourceByIds(
-                ((DataSourceIdsQueryCondition) request.getCondition()).getDataSourceIds(), request.getLoginId());
+        List<DataSource> dsList = dataSourceService.findByIds(
+                condition.getDataSourceIds(), request.getLoginId());
+        List<DataSource> dataSources = getDataSources(condition.getDataSourceIds(), dsList);
+        // 写删除数据源的操作记录
+        return dataSourceService.getListOperateResponse(request.getLoginId(), dataSources);
     }
 
     @Override
@@ -86,5 +106,43 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
                     request.getLoginId());
             default -> throw new DataSourceException(DataSourceErrorCode.QUERY_CONDITION_NOT_SUPPORT);
         };
+    }
+
+    /**
+     * 根据数据源ID列表获取可以成功删除的数据源列表
+     *
+     * @param dataSourceIds 数据源ID列表，用于判断是否需要使用线程池处理
+     * @param dsList        待处理的数据源列表
+     * @return 可以成功删除的数据源列表
+     */
+    private List<DataSource> getDataSources(List<Long> dataSourceIds, List<DataSource> dsList) {
+        List<DataSource> dsSuccess;
+        if (dataSourceIds.size() > 5) {
+            // 创建自定义线程池
+            ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
+                    .setNameFormat("delete-data-%d").get();
+            // 创建线程池并执行并行处理
+            try (ExecutorService pool = new ThreadPoolExecutor(
+                    5, 5, 0L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<>(), namedThreadFactory)) {
+                // 过滤出可以删除的数据源：数据不存在且删除成功的数据源
+                dsSuccess = dsList.stream()
+                        .filter(ds -> {
+                            try {
+                                return pool.submit(() -> dataFacadeService.existsData(ds.getId()) == 0 &&
+                                        dataSourceService.removeById(ds)).get();
+                            } catch (InterruptedException | ExecutionException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }).toList();
+            }
+        } else {
+            // 数据源数量小于等于5时，使用普通串行方式处理
+            dsSuccess = dsList.stream()
+                    .filter(ds -> dataFacadeService.existsData(ds.getId()) == 0 &&
+                            dataSourceService.removeById(ds))
+                    .toList();
+        }
+        return dsSuccess;
     }
 }

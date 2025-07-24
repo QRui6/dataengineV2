@@ -6,6 +6,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface DataConvertor {
 
@@ -22,4 +24,13 @@ public interface DataConvertor {
      */
     @Mapping(source = "data.type", target = "dataType")
     DataInfo mapToVo(Data data);
+
+    /**
+     * 数据源列表转换
+     *
+     * @param records 数据源列表
+     * @return 数据源信息列表
+     */
+    @Mapping(source = "data.type", target = "dataType")
+    List<DataInfo> mapToVoList(List<Data> records);
 }

@@ -23,4 +23,12 @@ public interface DataMapper extends BaseMapper<Data> {
      * @return 查询结果
      */
     Data findById(Long dataId, Long loginId);
+
+    /**
+     * 判断数据源下是否存在数据
+     *
+     * @param dsId 数据源ID
+     * @return 存在返回1，不存在返回0
+     */
+    int existsData(Long dsId);
 }
