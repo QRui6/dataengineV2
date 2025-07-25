@@ -3,10 +3,10 @@ package com.urban.carbon.auth.controller;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 
-import com.urban.carbon.api.user.request.UserQueryRequest;
-import com.urban.carbon.api.user.request.UserRegisterRequest;
-import com.urban.carbon.api.user.response.data.UserInfo;
-import com.urban.carbon.api.user.service.UserFacadeService;
+import com.urban.carbon.api.admin.service.UserManagerFacadeService;
+import com.urban.carbon.api.admin.request.UserQueryRequest;
+import com.urban.carbon.api.admin.request.UserRegisterRequest;
+import com.urban.carbon.api.admin.response.data.UserInfo;
 import com.urban.carbon.auth.params.LoginParam;
 import com.urban.carbon.auth.params.RegisterParam;
 import com.urban.carbon.auth.vo.LoginVO;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @DubboReference(version = "1.0.0")
-    private UserFacadeService userFacadeService;
+    private UserManagerFacadeService userFacadeService;
 
     /**
      * 默认登录超时时间：7天
@@ -69,8 +69,7 @@ public class AuthController {
         // 查询用户信息
         UserQueryRequest userQueryRequest = new UserQueryRequest(
                 loginParam.getTelephone(), loginParam.getPassword());
-        QueryResponse<UserInfo> userQueryResponse = userFacadeService.query(
-                userQueryRequest);
+        QueryResponse<UserInfo> userQueryResponse = userFacadeService.query(userQueryRequest);
         UserInfo userInfo = userQueryResponse.getData();
         if (userInfo == null) {
             // 需要注册

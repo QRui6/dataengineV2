@@ -1,7 +1,7 @@
 package com.urban.carbon.auth.vo;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.urban.carbon.api.user.response.data.UserInfo;
+import com.urban.carbon.api.admin.response.data.UserInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
