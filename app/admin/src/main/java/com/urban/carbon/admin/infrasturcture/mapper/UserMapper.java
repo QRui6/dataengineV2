@@ -2,7 +2,6 @@ package com.urban.carbon.admin.infrasturcture.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.urban.carbon.admin.domain.entity.User;
 import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.Mapper;

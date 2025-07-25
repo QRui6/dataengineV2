@@ -7,6 +7,8 @@ import com.urban.carbon.base.request.BaseRequest;
 import com.urban.carbon.base.request.QueryCondition;
 import lombok.*;
 
+import java.io.Serial;
+
 @Getter
 @Setter
 @ToString
@@ -14,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UserQueryRequest extends BaseRequest {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
