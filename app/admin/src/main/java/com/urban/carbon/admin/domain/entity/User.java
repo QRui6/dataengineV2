@@ -39,7 +39,6 @@ public class User extends BaseEntity {
     /**
      * 电话号码
      */
-    @SensitiveStrategyPhone
     private String telephone;
 
     /**

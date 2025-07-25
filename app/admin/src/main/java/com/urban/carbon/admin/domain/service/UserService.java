@@ -27,20 +27,29 @@ import com.urban.carbon.api.admin.request.UserActiveRequest;
 import com.urban.carbon.api.admin.request.UserRegisterRequest;
 import com.urban.carbon.api.admin.response.data.UserInfo;
 import com.urban.carbon.api.admin.request.UserModifyRequest;
+import com.urban.carbon.api.data.manager.constants.SaveSoftType;
 import com.urban.carbon.base.exception.BizException;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.utils.RandomNameGenerator;
+import com.urban.carbon.file.strategy.FileStrategy;
+import com.urban.carbon.file.strategy.FileStrategyFactory;
 import com.urban.carbon.lock.DistributeLock;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +58,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> implements InitializingBean {
+
+    private static final String TMP_PHOTO_PATH = System.getProperty("java.io.tmpdir");
 
     /**
      * 用户的 Mapper
@@ -81,24 +92,30 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     private final UserCacheDelayDeleteService userCacheDelayDeleteService;
 
     /**
+     * 文件策略工厂
+     */
+    private final FileStrategyFactory fileStrategyFactory;
+
+    /**
      * 构造方法注入
      *
      * @param userMapper                  userMapper
      * @param redissonClient              redisson client
      * @param cacheManager                cache manager
      * @param userOperateStreamService    user operate stream service
-     * @param userCacheDelayDeleteService     user cache delay delete service
+     * @param userCacheDelayDeleteService user cache delay delete service
      */
     public UserService(UserMapper userMapper, RedissonClient redissonClient,
                        CacheManager cacheManager, RoleMapper roleMapper,
                        UserOperateStreamService userOperateStreamService,
-                       UserCacheDelayDeleteService userCacheDelayDeleteService) {
+                       UserCacheDelayDeleteService userCacheDelayDeleteService, FileStrategyFactory fileStrategyFactory) {
         this.userMapper = userMapper;
         this.redissonClient = redissonClient;
         this.cacheManager = cacheManager;
         this.roleMapper = roleMapper;
         this.userOperateStreamService = userOperateStreamService;
         this.userCacheDelayDeleteService = userCacheDelayDeleteService;
+        this.fileStrategyFactory = fileStrategyFactory;
     }
 
     /**
@@ -277,25 +294,49 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     @CacheInvalidate(name = ":admin:user:cache:id:", key = "#userModifyRequest.userId")
     @Transactional
     public OperateResponse<UserInfo> modify(UserModifyRequest userModifyRequest) {
+
         OperateResponse<UserInfo> userOperatorResponse = new OperateResponse<>();
-        User user = userMapper.findById(userModifyRequest.getUserId());
+
+        Long userId = userModifyRequest.getUserId();
+        User user = userMapper.findById(userId);
         Assert.notNull(user, () -> new UserException(UserErrorCode.USER_NOT_EXIST));
         Assert.isTrue(user.canModifyInfo(), () -> new UserException(UserErrorCode.USER_STATUS_CANT_OPERATE));
+
+        // 查询角色是否存在
+        Role role = roleMapper.findByRoleName(userModifyRequest.getRoleName());
+        Assert.notNull(role, () -> new RoleException(RoleErrorCode.ROLE_NOT_EXIST));
+        user.setRoleId(role.getId());
+
         // 如果当前昵称已经存在，则不能使用该昵称
         if (StringUtils.isNotBlank(userModifyRequest.getNickName()) &&
                 nickNameExist(userModifyRequest.getNickName())) {
             throw new UserException(UserErrorCode.NICK_NAME_EXIST);
         }
-        BeanUtils.copyProperties(userModifyRequest, user);
+
+        // 如果手机号已存在且不是当前用户的手机号，则不能使用该手机号
+        String telephone = userModifyRequest.getTelephone();
+        if (StringUtils.isNotBlank(telephone) && !telephone.equals(user.getTelephone())) {
+            User existUser = userMapper.findByTelephone(telephone);
+            if (existUser != null && !existUser.getId().equals(userId)) {
+                throw new UserException(UserErrorCode.DUPLICATE_TELEPHONE_NUMBER);
+            }
+        }
+
         // 如果密码不为空，则需要更新密码
         if (StringUtils.isNotBlank(userModifyRequest.getPassword())) {
             user.setPasswordHash(DigestUtil.md5Hex(userModifyRequest.getPassword()));
         }
+
+        // 如果 InputStream 不为空，则需要更新用户头像
+        if (userModifyRequest.getPhotoInputStream() != null) {
+            user.setProfilePhotoUrl(uploadPhoto(userId, userModifyRequest.getPhotoInputStream()));
+        }
+
         // 通过user的ID更新user
         if (updateById(user)) {
             // 加入流水
             long streamResult = userOperateStreamService.insertStream(
-                    user, userModifyRequest.getUserId(), UserOperateTypeEnum.MODIFY);
+                    user, userId, UserOperateTypeEnum.MODIFY);
             Assert.notNull(streamResult, () -> new UserException(UserErrorCode.USER_UPDATE_FAILED));
             addNickName(userModifyRequest.getNickName());
             userOperatorResponse.setSuccess(true);
@@ -306,17 +347,49 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     }
 
     /**
+     * 上传用户头像图片
+     *
+     * @param photoInputStream 图片输入流
+     * @return 上传后的文件访问路径
+     */
+    private String uploadPhoto(Long userId, InputStream photoInputStream) {
+        // 获取文件存储策略（使用MINIO存储）
+        FileStrategy strategy = fileStrategyFactory.getStrategy(SaveSoftType.MINIO.name());
+
+        // 生成随机文件名
+        String photo = RandomNameGenerator.generateRandomFileName(16, "png");
+        String tmp_path = TMP_PHOTO_PATH + File.separator + photo;
+
+        // 将输入流写入临时文件
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(tmp_path);
+            fileOutputStream.write(photoInputStream.readAllBytes());
+            // 上传临时文件并返回访问路径
+            String dstPath = strategy.uploadFile(tmp_path, userId);
+            // 删除临时文件
+            Path path = Paths.get(tmp_path);
+            Files.deleteIfExists(path);
+            fileOutputStream.close();
+            // 返回结果
+            return dstPath;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
      * 用户激活
      * <p>
      * CacheInvalidate 注解的主要作用是根据指定的缓存名称和键值，从缓存中移除对应的数据 。
-     *                  通常在更新或删除数据时使用，以确保缓存与数据库或其他数据源保持一致性。
-     *                  <p>
+     * 通常在更新或删除数据时使用，以确保缓存与数据库或其他数据源保持一致性。
+     * <p>
      * CacheInvalidate 注解被用于用户激活功能的实现。它的作用是清除与用户相关的缓存数据 ，
-     *                  以确保在用户激活操作完成后，系统能够从数据库或其他数据源重新加载最新的用户状态，
-     *                  而不是继续使用可能已经过期的缓存数据。
-     *                  <p>
-     *                  在之后的方法中, 并没有使用该注解, 而是使用手动清除缓存的方式进行操作, 这是因为冻结与
-     *                  解冻的准确性, 响应速度要求较高, 但对于激活来说并没有很高的响应速度要求.
+     * 以确保在用户激活操作完成后，系统能够从数据库或其他数据源重新加载最新的用户状态，
+     * 而不是继续使用可能已经过期的缓存数据。
+     * <p>
+     * 在之后的方法中, 并没有使用该注解, 而是使用手动清除缓存的方式进行操作, 这是因为冻结与
+     * 解冻的准确性, 响应速度要求较高, 但对于激活来说并没有很高的响应速度要求.
      *
      * @param userActiveRequest 激活请求
      * @return 返回用户操作结果
@@ -467,73 +540,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     @CacheRefresh(refresh = 60, timeUnit = TimeUnit.MINUTES)
     public User findById(Long userId) {
         return userMapper.findById(userId);
-    }
-
-    /**
-     * <p>
-     * 更新用户信息（管理员操作）
-     * </p>
-     * <p>
-     * 与用户自己修改信息的方法类似，但是这个方法是由管理员调用，可以修改用户的角色和手机号等信息
-     * </p>
-     *
-     * @param userId    用户ID
-     * @param name      用户名
-     * @param telephone 手机号
-     * @param roleName  角色名称
-     * @param loginId   操作人ID
-     * @return 用户操作记录
-     */
-    @CacheInvalidate(name = ":admin:user:cache:id:", key = "#userId")
-    @CacheInvalidate(name = ":admin:user:cache:telephone:", key = "#telephone")
-    @Transactional
-    public OperateResponse<UserInfo> updateUser(Long userId, String name, String telephone, String roleName,
-                                                Long loginId) {
-        OperateResponse<UserInfo> userOperatorResponse = new OperateResponse<>();
-
-        // 查询用户是否存在
-        User user = userMapper.findById(userId);
-        Assert.notNull(user, () -> new UserException(UserErrorCode.USER_NOT_EXIST));
-
-        // 查询角色是否存在
-        Role role = roleMapper.findByRoleName(roleName);
-        Assert.notNull(role, () -> new RoleException(RoleErrorCode.ROLE_NOT_EXIST));
-
-        // 如果当前昵称已经存在且不是当前用户的昵称，则不能使用该昵称
-        if (StringUtils.isNotBlank(name) && !name.equals(user.getNickName()) && nickNameExist(name)) {
-            throw new UserException(UserErrorCode.NICK_NAME_EXIST);
-        }
-
-        // 如果手机号已存在且不是当前用户的手机号，则不能使用该手机号
-        if (StringUtils.isNotBlank(telephone) && !telephone.equals(user.getTelephone())) {
-            User existUser = userMapper.findByTelephone(telephone);
-            if (existUser != null && !existUser.getId().equals(userId)) {
-                throw new UserException(UserErrorCode.DUPLICATE_TELEPHONE_NUMBER);
-            }
-        }
-
-        // 更新用户信息
-        user.updateUser(name, telephone, role.getId(), roleName);
-
-        // 通过user的ID更新user
-        if (updateById(user)) {
-            // 加入流水
-            long streamResult = userOperateStreamService.insertStream(
-                    user, loginId, UserOperateTypeEnum.MODIFY);
-            Assert.notNull(streamResult, () -> new UserException(UserErrorCode.USER_OPERATE_FAILED));
-
-            // 添加昵称到布隆过滤器
-            addNickName(name);
-
-            // 更新缓存
-            idUserCache.put(user.getId().toString(), user);
-
-            userOperatorResponse.setSuccess(true);
-            userOperatorResponse.setData(UserConvertor.INSTANCE.mapToVo(user));
-        } else {
-            userOperatorResponse.setSuccess(false);
-        }
-        return userOperatorResponse;
     }
 
     /**

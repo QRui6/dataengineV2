@@ -2,18 +2,25 @@ package com.urban.carbon.user.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.urban.carbon.api.admin.request.UserModifyRequest;
+import com.urban.carbon.api.admin.request.UserQueryRequest;
+import com.urban.carbon.api.admin.service.UserManagerFacadeService;
+import com.urban.carbon.base.response.OperateResponse;
+import com.urban.carbon.api.admin.exception.UserErrorCode;
+import com.urban.carbon.api.admin.exception.UserException;
+import com.urban.carbon.api.admin.response.data.UserInfo;
 import com.urban.carbon.user.domain.entity.Account;
-import com.urban.carbon.user.domain.entity.convertor.UserConvertor;
-import com.urban.carbon.user.domain.service.UserService;
+import com.urban.carbon.user.domain.entity.convertor.AccountConvertor;
+import com.urban.carbon.user.domain.service.AccountService;
 import com.urban.carbon.user.params.UserModifiedParam;
-import com.urban.carbon.api.user.exception.UserErrorCode;
-import com.urban.carbon.api.user.exception.UserException;
-import com.urban.carbon.api.user.response.data.UserInfo;
 import com.urban.carbon.web.vo.Result;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/user")
@@ -22,75 +29,76 @@ public class PersonalController {
     /**
      * 用户服务
      */
-    private final UserService userService;
+    private final AccountService accountService;
 
-    public PersonalController(UserService userService) {
-        this.userService = userService;
+    private final UserManagerFacadeService userManagerFacadeService;
+
+    public PersonalController(AccountService accountService,
+                              UserManagerFacadeService userManagerFacadeService) {
+        this.accountService = accountService;
+        this.userManagerFacadeService = userManagerFacadeService;
     }
 
     @GetMapping("/getUserInfo")
     public Result<UserInfo> getUserInfo() {
-        String userId = (String) StpUtil.getLoginId();
-        Account account = userService.findById(Long.valueOf(userId));
-        if (account == null) {
-            throw new UserException(UserErrorCode.USER_NOT_EXIST);
-        }
-        return Result.success(UserConvertor.INSTANCE.mapToVo(account));
+        String loginId = (String) StpUtil.getLoginId();
+        Account response = accountService.getById(Long.valueOf(loginId));
+        return Result.success(AccountConvertor.INSTANCE.mapToVo(response));
     }
 
     /**
      * 修改用户的昵称。
      *
-     * @param userModifyParam 包含新昵称的参数
+     * @param param 包含新昵称的参数
      * @return 修改结果
      * @throws UserException 如果用户不存在
      */
     @PostMapping("/modifyNickName")
-    public Result<Boolean> modifyNickName(@Valid @RequestBody UserModifiedParam userModifyParam) {
+    public Result<UserInfo> modifyNickName(@Valid @RequestBody UserModifiedParam param) {
         String userId = (String) StpUtil.getLoginId();
-        Account account = userService.findById(Long.valueOf(userId));
-        if (account == null) {
-            throw new UserException(UserErrorCode.USER_NOT_EXIST);
+        if (param.getNickName().isBlank()) {
+            throw new UserException(UserErrorCode.PARAM_ERROR);
         }
-        // 这里不存在冗余操作，
-        // userService中的findById方法是存在缓存的，本地缓存，还有Redis分布式缓存
-        // 所以就算上面的信息存在，这里也需要回到数据库中查一遍，看看是否真的存在。
-        Boolean modifyResult = userService.modifyAccount(
-                Long.valueOf(userId), account.getNickName(), null,
-                null, null).getSuccess();
-        if (modifyResult) {
+        UserModifyRequest request = new UserModifyRequest();
+        request.setUserId(Long.valueOf(userId));
+        request.setLoginId(Long.valueOf(userId));
+        request.setNickName(param.getNickName());
+        OperateResponse<UserInfo> response = userManagerFacadeService.modify(request);
+        if (response.getSuccess()) {
             refreshUserInSession(userId);
         }
-        return Result.success(modifyResult);
+        return Result.success(response.getData());
     }
 
     /**
      * 修改用户的密码。
      *
-     * @param userModifyParam 包含旧密码和新密码的参数
+     * @param param 包含旧密码和新密码的参数
      * @return 修改结果
      * @throws UserException 如果用户不存在或旧密码不正确
      */
     @PostMapping("/modifyPassword")
-    public Result<Boolean> modifyPassword(@Valid @RequestBody UserModifiedParam userModifyParam) {
+    public Result<UserInfo> modifyPassword(@Valid @RequestBody UserModifiedParam param) {
         // 查询用户信息
         String userId = (String) StpUtil.getLoginId();
-        Account account = userService.findById(Long.valueOf(userId));
-        if (account == null) {
-            throw new UserException(UserErrorCode.USER_NOT_EXIST);
+        if (param.getNewPassword().isBlank() || param.getOldPassword().isBlank()) {
+            throw new UserException(UserErrorCode.PARAM_ERROR);
         }
+        Account account = accountService.getById(Long.valueOf(userId));
         // 检查旧密码是否和原本的一致
         if (!StringUtils.equals(account.getPasswordHash(),
-                DigestUtil.md5Hex(userModifyParam.getOldPassword()))) {
+                DigestUtil.md5Hex(param.getOldPassword()))) {
             throw new UserException(UserErrorCode.USER_PASSWD_CHECK_FAIL);
         }
-        // 这里不存在冗余操作，
-        // userService中的findById方法是存在缓存的，本地缓存，还有Redis分布式缓存
-        // 所以就算上面的信息存在，这里也需要回到数据库中查一遍，看看是否真的存在。
-        Boolean modifyResult = userService.modifyAccount(
-                Long.valueOf(userId), null, null,
-                userModifyParam.getNewPassword(), null).getSuccess();
-        return Result.success(modifyResult);
+        UserModifyRequest request = new UserModifyRequest();
+        request.setUserId(Long.valueOf(userId));
+        request.setLoginId(Long.valueOf(userId));
+        request.setPassword(param.getNewPassword());
+        OperateResponse<UserInfo> response = userManagerFacadeService.modify(request);
+        if (response.getSuccess()) {
+            refreshUserInSession(userId);
+        }
+        return Result.success(response.getData());
     }
 
     /**
@@ -101,24 +109,26 @@ public class PersonalController {
      */
     @Deprecated(since = "0.0.2", forRemoval = true)
     @PostMapping("/modifyProfilePhoto")
-    public Result<String> modifyProfilePhoto(@RequestParam("file_data") MultipartFile file) {
+    public Result<String> modifyProfilePhoto(@RequestParam("file") MultipartFile file)
+            throws IOException {
         // 获取用户ID
-//        String userId = (String) StpUtil.getLoginId();
-//        if (file.isEmpty()) {
-//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-//        }
-//        FileUploadVO res = fileService.upload(file, Long.valueOf(userId));
-//        if (!res.getUploadSuccess()) {
-//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-//        }
-//        Boolean result = userService.modifyAccount(
-//                Long.valueOf(userId), null, null,
-//                null, null).getSuccess();
-//        if (!result) {
-//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-//        }
-//        return Result.success(res.getFilePath());
-        return null;
+        String userId = (String) StpUtil.getLoginId();
+        if (file.isEmpty()) {
+            throw new UserException("File is Empty", UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+        }
+        if (file.getSize() > 1024 * 1024 * 2) {
+            throw new UserException("Photo can't be large than 2 MB!",
+                    UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+        }
+        UserModifyRequest request = new UserModifyRequest();
+        request.setUserId(Long.valueOf(userId));
+        request.setLoginId(Long.valueOf(userId));
+        request.setPhotoInputStream(file.getInputStream());
+        OperateResponse<UserInfo> response = userManagerFacadeService.modify(request);
+        if (!response.getSuccess()) {
+            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+        }
+        return Result.success(response.getData().getProfilePhotoUrl());
     }
 
     /**
@@ -127,8 +137,8 @@ public class PersonalController {
      * @param userId 用户ID
      */
     private void refreshUserInSession(String userId) {
-        Account account = userService.getById(Long.valueOf(userId));
-        UserInfo userInfo = UserConvertor.INSTANCE.mapToVo(account);
+        Account account = accountService.getById(Long.valueOf(userId));
+        UserInfo userInfo = AccountConvertor.INSTANCE.mapToVo(account);
         StpUtil.getSession().set(userInfo.getUserId().toString(), userInfo);
     }
 }

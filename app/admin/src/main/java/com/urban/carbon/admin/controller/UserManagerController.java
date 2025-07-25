@@ -12,6 +12,7 @@ import com.urban.carbon.api.admin.constants.UserStateEnum;
 import com.urban.carbon.api.admin.exception.UserErrorCode;
 import com.urban.carbon.api.admin.exception.UserException;
 import com.urban.carbon.api.admin.request.UserActiveRequest;
+import com.urban.carbon.api.admin.request.UserModifyRequest;
 import com.urban.carbon.api.admin.response.data.UserInfo;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
@@ -104,9 +105,13 @@ public class UserManagerController {
         }
 
         // 调用服务层更新用户
-        OperateResponse<UserInfo> response = userService.updateUser(
-                param.getUserId(), param.getName(), param.getTelephone(),
-                param.getRole(), Long.valueOf(loginId));
+        UserModifyRequest request = new UserModifyRequest();
+        request.setUserId(param.getUserId());
+        request.setLoginId(Long.valueOf(loginId));
+        request.setNickName(param.getName());
+        request.setTelephone(param.getTelephone());
+        request.setRoleName(param.getRole());
+        OperateResponse<UserInfo> response = userService.modify(request);
 
         // 返回更新结果
         return Result.success(response.getData());

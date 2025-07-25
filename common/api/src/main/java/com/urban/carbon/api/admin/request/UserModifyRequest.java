@@ -4,6 +4,8 @@ import com.urban.carbon.base.request.BaseRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.InputStream;
+
 /**
  * 用户基础信息修改请求
  * @author bjcug
@@ -22,8 +24,10 @@ public class UserModifyRequest extends BaseRequest {
 
     private String password;
 
-    private String profilePhotoUrl;
+    private InputStream photoInputStream;
 
     private String telephone;
+
+    private String roleName;
 
 }

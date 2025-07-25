@@ -64,7 +64,12 @@ public enum UserErrorCode implements ErrorCode {
     /**
      * 用户更新失败
      */
-    USER_UPDATE_FAILED("USER_UPDATE_FAILED", "用户更新失败");
+    USER_UPDATE_FAILED("USER_UPDATE_FAILED", "用户更新失败"),
+
+    /**
+     * 参数错误
+     */
+    PARAM_ERROR("PARAM_ERROR", "参数错误");
 
     private final String code;
 

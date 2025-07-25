@@ -6,7 +6,7 @@ import lombok.Setter;
 /**
  * 用户修改密码使用的参数
  *
- * @author XuGaoran
+ * @author bjcug
  */
 @Setter
 @Getter

@@ -4,19 +4,23 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
-import com.urban.carbon.api.user.constants.UserStateEnum;
+import com.urban.carbon.api.admin.constants.UserStateEnum;
 import com.urban.carbon.data.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.Date;
 
+/**
+ * 用户实体
+ *
+ * @author bjcug
+ */
 @Getter
 @Setter
-@ToString
-@TableName("public.users")
+@TableName(value = "public.users")
 public class Account extends BaseEntity {
+
     /**
      * 用户昵称
      */
@@ -70,9 +74,12 @@ public class Account extends BaseEntity {
      * @param telephone 电话
      * @param nickName  昵称
      * @param password  密码
+     * @param roleName  角色名称
+     * @param roleId    角色id
+     * @param mode      注册时候，直接设置成active，管理员创建用户时，init
      */
     public void register(String telephone, String nickName, String password,
-                         Long roleId, String roleName) {
+                         Long roleId, String roleName, Boolean mode) {
         // 设置电话
         this.setTelephone(telephone);
         // 设置昵称
@@ -80,11 +87,27 @@ public class Account extends BaseEntity {
         // 对明文密码进行加密
         this.setPasswordHash(DigestUtil.md5Hex(password));
         // 设置初始化相关内容
-        this.setState(UserStateEnum.INIT);
+        this.setState(mode ? UserStateEnum.ACTIVE : UserStateEnum.INIT);
         // 设置角色id
         this.setRoleId(roleId);
         // 设置角色
         this.setRoleName(roleName);
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param name      昵称
+     * @param telephone 电话
+     * @param roleId    角色id
+     * @param roleName  角色名称
+     */
+    public void updateUser(String name, String telephone, Long roleId, String roleName) {
+        this.nickName = name;
+        this.telephone = telephone;
+        this.roleId = roleId;
+        this.roleName = roleName;
+        this.setGmtModified(new Date());
     }
 
     /**
@@ -94,28 +117,5 @@ public class Account extends BaseEntity {
      */
     public boolean canModifyInfo() {
         return state == UserStateEnum.INIT || state == UserStateEnum.ACTIVE;
-    }
-
-    /**
-     * 修改用户信息
-     *
-     * @param nickName 昵称
-     * @param telephone 手机号
-     * @param password 密码
-     * @param profilePhotoUrl 头像
-     */
-    public void modifyInfo(String nickName, String telephone, String password, String profilePhotoUrl) {
-        if (nickName != null) {
-            this.nickName = nickName;
-        }
-        if (telephone != null) {
-            this.telephone = telephone;
-        }
-        if (password != null) {
-            this.passwordHash = DigestUtil.md5Hex(password);
-        }
-        if (profilePhotoUrl != null) {
-            this.profilePhotoUrl = profilePhotoUrl;
-        }
     }
 }
