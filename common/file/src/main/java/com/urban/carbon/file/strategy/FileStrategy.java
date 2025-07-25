@@ -27,7 +27,7 @@ public interface FileStrategy {
      * @param filePath 本地文件路径（或临时分片路径）
      * @return 是否上传成功
      */
-    String uploadFile(String filePath);
+    String uploadFile(String filePath, Long userId);
 
     /**
      * 将指定路径的临时文件或分片上传到目标存储系统
@@ -36,7 +36,7 @@ public interface FileStrategy {
      * @param filePath 本地文件路径（或临时分片路径）
      * @return 是否上传成功
      */
-    String uploadFile(Path filePath);
+    String uploadFile(Path filePath, Long userId);
 
     /**
      * 从目标存储系统中删除指定路径的文件

@@ -118,7 +118,7 @@ public class DataFacadeServiceImpl implements DataFacadeService {
         Data data = dataService.findByFileId(uploadId);
         Assert.notNull(data, () -> new DataException(DataErrorCode.DATA_NOT_FOUND));
         OperateResponse<UploadStatusInfo> response = new OperateResponse<>();
-        UploadStatusInfo statusInfo = fileService.mergeChunks(uploadId, data);
+        UploadStatusInfo statusInfo = fileService.mergeChunks(uploadId, data, request.getLoginId());
         if (dataService.uploadDataStatus(statusInfo.getFilePath(), data, request.getLoginId())) {
             response.setSuccess(true);
             response.setData(statusInfo);

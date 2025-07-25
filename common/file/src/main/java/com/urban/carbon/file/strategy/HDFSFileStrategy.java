@@ -78,9 +78,9 @@ public class HDFSFileStrategy implements FileStrategy {
     }
 
     @Override
-    public String uploadFile(String filePath) {
+    public String uploadFile(String filePath, Long userId) {
         Path srcPath = new Path(filePath);
-        Path dstPath = this.getTargetPath(filePath);
+        Path dstPath = this.getTargetPath(filePath, userId);
         try {
             // 如果目标路径已存在，则先删除
             if (fileSystem.exists(dstPath)) {
@@ -97,14 +97,14 @@ public class HDFSFileStrategy implements FileStrategy {
     }
 
     @Override
-    public String uploadFile(java.nio.file.Path filePath) {
-        return this.uploadFile(filePath.toString());
+    public String uploadFile(java.nio.file.Path filePath, Long userId) {
+        return this.uploadFile(filePath.toString(), userId);
     }
 
     @Override
     public Boolean deleteFile(String filePath) {
         try {
-            Path pathToDelete = this.getTargetPath(filePath);
+            Path pathToDelete = new Path(filePath);
             // 检查文件是否存在
             if (!fileSystem.exists(pathToDelete)) {
                 log.warn("File does not exist in HDFS: {}", filePath);
@@ -150,10 +150,10 @@ public class HDFSFileStrategy implements FileStrategy {
      * @param filePath 文件路径
      * @return 目标路径
      */
-    private Path getTargetPath(String filePath) {
+    private Path getTargetPath(String filePath, Long userId) {
         String fileWithType = filePath.substring(
                 filePath.lastIndexOf(File.separator) + 1);
-        return new Path(hdfsProperties.getBasePath() + "/" + fileWithType);
+        return new Path(hdfsProperties.getBasePath() + "/" + userId + "/" + fileWithType);
     }
 
     /**

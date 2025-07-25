@@ -174,7 +174,7 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
      * @return 返回一个包含文件上传状态信息的UploadStatusInfo对象
      */
     @DistributeLock(scene = "COMPLETE", keyExpression = "#uploadId")
-    public UploadStatusInfo mergeChunks(String uploadId, Data data) {
+    public UploadStatusInfo mergeChunks(String uploadId, Data data, Long loginId) {
         // 检查所有文件块是否已成功上传
         List<Integer> successChunks = this.allCompleted(uploadId, data.getTotalChunks());
         Integer totalChunks = data.getTotalChunks();
@@ -187,7 +187,7 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
         // 检查所有文件块是否已成功上传
         if (successChunks.size() == totalChunks) {
             // 将文件上传到指定位置
-            filePath = uploadFileToDataStore(uploadId, saveSoftType);
+            filePath = uploadFileToDataStore(uploadId, saveSoftType, loginId);
             // 删除临时文件
             Boolean deleteResult = deleteTmpFile(uploadId);
             Assert.isTrue(deleteResult, () -> new FileException("Delete Tmp File Failed!",
@@ -402,12 +402,12 @@ public class FileService extends ServiceImpl<FileUploadChunkMapper, FileUploadCh
      * @param saveSoftType 保存数据库的类型
      * @return 上传成功后的文件路径
      */
-    private String uploadFileToDataStore(String fileId, SaveSoftType saveSoftType) {
+    private String uploadFileToDataStore(String fileId, SaveSoftType saveSoftType, Long loginId) {
         // 获取临时文件路径
         Path tmpFilePath = Paths.get(TEMP_PATH, fileId);
         // 上传文件
         FileStrategy strategy = fileStrategyFactory.getStrategy(saveSoftType.name());
-        String dstPath = strategy.uploadFile(tmpFilePath);
+        String dstPath = strategy.uploadFile(tmpFilePath, loginId);
         // 上传文件
         Assert.notNull(dstPath, () -> new BizException(
                 "Temp File Failed send to Save Soft", FileErrorCode.FILE_UPLOAD_FAILED));

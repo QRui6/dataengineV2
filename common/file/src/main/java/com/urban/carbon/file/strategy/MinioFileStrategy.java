@@ -139,13 +139,13 @@ public class MinioFileStrategy implements FileStrategy {
     }
 
     @Override
-    public String uploadFile(String filePath) {
+    public String uploadFile(String filePath, Long userId) {
         try {
             String basePath = minioProperties.getBasePath();
             // 验证连接是否有效
             this.minioClient = getMinioClient();
             // 获取对象名称
-            String objectName = getObjectName(filePath);
+            String objectName = userId + "/" + getObjectName(filePath);
             // 上传文件
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
@@ -163,8 +163,8 @@ public class MinioFileStrategy implements FileStrategy {
     }
 
     @Override
-    public String uploadFile(Path filePath) {
-        return this.uploadFile(filePath.toString());
+    public String uploadFile(Path filePath, Long userId) {
+        return this.uploadFile(filePath.toString(), userId);
     }
 
     @Override
@@ -172,12 +172,13 @@ public class MinioFileStrategy implements FileStrategy {
         try {
             // 验证连接是否有效
             this.minioClient = getMinioClient();
-            // 获取对象名称
-            String objectName = getObjectName(filePath);
             // 删除文件
+            String basePath = minioProperties.getBasePath();
+            // 获取对象名称
+            String objectName = filePath.substring(basePath.length() + 2);
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
-                            .bucket(minioProperties.getBasePath())
+                            .bucket(basePath)
                             .object(objectName)
                             .build());
 
@@ -194,12 +195,13 @@ public class MinioFileStrategy implements FileStrategy {
         try {
             // 验证连接是否有效
             this.minioClient = getMinioClient();
-            // 获取对象名称
-            String objectName = getObjectName(filePath);
             // 获取文件输入流
+            String basePath = minioProperties.getBasePath();
+            // 获取对象名称
+            String objectName = filePath.substring(basePath.length() + 2);
             try (InputStream inputStream = minioClient.getObject(
                     GetObjectArgs.builder()
-                            .bucket(minioProperties.getBasePath())
+                            .bucket(basePath)
                             .object(objectName)
                             .build())) {
                 byte[] buffer = new byte[4096];
