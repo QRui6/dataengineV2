@@ -93,8 +93,7 @@ public interface DataFacadeService {
      * 删除数据
      *
      * @param request 数据查询请求
-     * @param loginId 登录ID
      * @return 删除结果
      */
-    OperateResponse<List<Long>> deleteData(DataQueryRequest request, Long loginId);
+    OperateResponse<List<Long>> deleteData(DataQueryRequest request);
 }

@@ -43,8 +43,9 @@ public class DataInteractionController {
             @RequestParam List<Long> dataIds) {
         String loginId = (String) StpUtil.getLoginId();
         DataQueryRequest dataQueryRequest = new DataQueryRequest(dataIds);
+        dataQueryRequest.setLoginId(Long.valueOf(loginId));
         List<Long> response = dataFacadeService.deleteData(
-                dataQueryRequest, Long.valueOf(loginId)).getData();
+                dataQueryRequest).getData();
         return Result.success(new DeleteResponseVO(response, dataIds));
     }
 }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.urban.carbon.admin.infrastructure.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.urban.carbon.admin.domain.entity.User">
+    <result property="id" column="ID"/>
+    <result property="gmtCreate" column="GMT_CREATE"/>
+    <result property="gmtModified" column="GMT_MODIFIED"/>
+    <result property="nickName" column="NICK_NAME"/>
+    <result property="passwordHash" column="PASSWORD_HASH"/>
+    <result property="state" column="STATE"/>
+    <result property="telephone" column="TELEPHONE"/>
+    <result property="lastLoginTime" column="LAST_LOGIN_TIME"/>
+    <result property="profilePhotoUrl" column="PROFILE_PHOTO_URL"/>
+    <result property="roleId" column="ROLE_ID"/>
+    <result property="roleName" column="ROLE_NAME"/>
+    <result property="deleted" column="DELETED"/>
+    <result property="lockVersion" column="LOCK_VERSION"/>
+  </resultMap>
+
+  <resultMap id="UserWithRoleResultMap" type="com.urban.carbon.admin.domain.entity.User">
+    <result property="id" column="ID"/>
+    <result property="gmtCreate" column="GMT_CREATE"/>
+    <result property="gmtModified" column="GMT_MODIFIED"/>
+    <result property="nickName" column="NICK_NAME"/>
+    <result property="passwordHash" column="PASSWORD_HASH"/>
+    <result property="state" column="STATE"/>
+    <result property="telephone" column="TELEPHONE"/>
+    <result property="lastLoginTime" column="LAST_LOGIN_TIME"/>
+    <result property="profilePhotoUrl" column="PROFILE_PHOTO_URL"/>
+    <result property="roleId" column="ROLE_ID"/>
+    <result property="roleName" column="ROLE_NAME"/>
+    <result property="userPermission" column="ROLE_PERMISSION"/>
+    <result property="deleted" column="DELETED"/>
+    <result property="lockVersion" column="LOCK_VERSION"/>
+  </resultMap>
+
+  <select id="findByRoleId" resultMap="BaseResultMap">
+    SELECT *
+    FROM "public"."users"
+    WHERE "deleted" = 0 AND "role_id" = #{roleId};
+  </select>
+
+  <select id="findById" resultMap="UserWithRoleResultMap">
+    SELECT u.*, r.role_permission as ROLE_PERMISSION
+    FROM "public"."users" u
+           LEFT JOIN "public"."roles" r ON u."role_id" = r."id"
+    WHERE u."deleted" = 0 AND u."id" = #{id}
+  </select>
+
+  <select id="findByNickname" resultMap="BaseResultMap">
+    select * from public.users where deleted=0
+    <if test="nickName!=null">AND nick_name = #{nickName}</if>
+  </select>
+
+  <select id="findByTelephone" resultMap="BaseResultMap">
+    select * from public.users where deleted=0
+    <if test="telephone!=null">AND telephone = #{telephone}</if>
+  </select>
+
+  <select id="findByTelephoneAndPass" resultMap="UserWithRoleResultMap">
+    SELECT u.*, r.role_permission as ROLE_PERMISSION
+    FROM public.users u
+    LEFT JOIN public.roles r ON u.role_id = r.id
+    WHERE u.deleted = 0
+    <if test="telephone!=null">AND u.telephone = #{telephone}</if>
+    <if test="passwordHash!=null">AND u.password_hash = #{passwordHash}</if>
+  </select>
+
+  <select id="pageQueryUsersWithRole" resultMap="UserWithRoleResultMap">
+    SELECT u.*, r.role_permission as ROLE_PERMISSION
+    FROM public.users u
+    LEFT JOIN public.roles r ON u.role_id = r.id
+    WHERE u.deleted = 0
+    <if test="userName != null and userName != ''">
+      AND u.nick_name LIKE CONCAT('%', #{userName}, '%')
+    </if>
+    <if test="state != null and state != ''">
+      AND u.state = #{state}
+    </if>
+    <if test="role != null and role != ''">
+      AND u.role_name = #{role}
+    </if>
+    ORDER BY u.gmt_create DESC
+  </select>
+</mapper>

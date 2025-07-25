@@ -14,4 +14,12 @@ public interface RoleMapper extends BaseMapper<Role> {
      * @return 角色信息
      */
     Role findByRoleId(Long roleId);
+
+    /**
+     * 根据角色名称查询角色信息
+     *
+     * @param roleName 角色名称
+     * @return 角色信息
+     */
+    Role findByRoleName(String roleName);
 }

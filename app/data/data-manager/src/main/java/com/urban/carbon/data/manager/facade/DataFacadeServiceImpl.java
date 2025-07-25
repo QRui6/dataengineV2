@@ -198,13 +198,14 @@ public class DataFacadeServiceImpl implements DataFacadeService {
     }
 
     @Override
-    public OperateResponse<List<Long>> deleteData(DataQueryRequest request, Long loginId) {
+    public OperateResponse<List<Long>> deleteData(DataQueryRequest request) {
         if (!(request.getCondition() instanceof DataIdsQueryCondition)) {
             throw new DataException(DataErrorCode.QUERY_CONDITION_NOT_SUPPORT);
         }
+        // 调用删除函数
         List<Long> idsSuccess = dataService.deleteData(
-                ((DataIdsQueryCondition) request.getCondition()).getIds());
-
+                ((DataIdsQueryCondition) request.getCondition()).getIds(), request.getLoginId());
+        // 封装操作结果
         OperateResponse<List<Long>> response = new OperateResponse<>();
         response.setSuccess(true);
         response.setData(idsSuccess);

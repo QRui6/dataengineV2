@@ -1,6 +1,7 @@
-package com.urban.carbon.data.source.domain.entity;
+package com.urban.carbon.data.source.domain.entity.convertor;
 
 import com.urban.carbon.api.data.source.response.data.DataSourceInfo;
+import com.urban.carbon.data.source.domain.entity.DataSource;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;

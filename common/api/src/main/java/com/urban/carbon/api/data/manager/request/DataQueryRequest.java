@@ -17,10 +17,20 @@ public class DataQueryRequest extends BaseRequest {
 
     private QueryCondition condition;
 
+    /**
+     * 批量查询
+     *
+     * @param ids 数据 ID 列表
+     */
     public DataQueryRequest(List<Long> ids) {
         this.condition = new DataIdsQueryCondition(ids);
     }
 
+    /**
+     * 单个查询
+     *
+     * @param id 数据 ID
+     */
     public DataQueryRequest(Long id) {
         this.condition = new DataIdQueryCondition(id);
     }

@@ -7,5 +7,8 @@ public enum DataSourceType {
      */
     MINIO,
 
+    /**
+     * hdfs
+     */
     HDFS
 }

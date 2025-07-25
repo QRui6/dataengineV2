@@ -11,7 +11,7 @@ import com.urban.carbon.api.data.source.response.data.DataSourceInfo;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.data.source.domain.entity.DataSource;
-import com.urban.carbon.data.source.domain.entity.DataSourceConvertor;
+import com.urban.carbon.data.source.domain.entity.convertor.DataSourceConvertor;
 import com.urban.carbon.data.source.infrastructure.mapper.DataSourceMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

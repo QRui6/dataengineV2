@@ -123,7 +123,7 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
      * <p>
      * 此方法用于在数据上传过程中取消上传操作它通过更新数据的状态和删除标记来实现取消操作
      *
-     * @param data 要取消上传的数据对象
+     * @param data    要取消上传的数据对象
      * @param loginId 当前登录用户的唯一标识符
      * @return 返回更新操作是否成功如果返回true，则表示取消操作成功；如果返回false，则表示取消操作失败
      */
@@ -188,12 +188,18 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
         return dataMapper.existsData(dsId);
     }
 
-    public List<Long> deleteData(List<Long> ids) {
+    /**
+     * 删除数据源 TODO 修改写入记录
+     *
+     * @param ids 待删除的数据源ID列表
+     * @return 删除成功的数据源ID列表
+     */
+    public List<Long> deleteData(List<Long> ids, Long loginId) {
         List<Long> dataSuccess;
         if (ids.size() > 5) {
             // 创建自定义线程池
             ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
-                    .setNameFormat("delete-data-source-%d").get();
+                    .setNameFormat("delete-data-%d").get();
             // 创建线程池并执行并行处理
             try (ExecutorService pool = new ThreadPoolExecutor(
                     5, 5, 0L, TimeUnit.MILLISECONDS,
@@ -216,6 +222,13 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
                             this.removeById(id))
                     .toList();
         }
+//        // 插入操作记录
+//        Long insertStream = dataOperateStreamService.insertStream(
+//                data, loginId, DataOperateType.UPDATE);
+//        // 确保操作记录插入成功
+//        Assert.notNull(insertStream, () -> new DataException(
+//                DataErrorCode.DATA_OPERATE_STREAM_FAIL));
         return dataSuccess;
     }
+
 }

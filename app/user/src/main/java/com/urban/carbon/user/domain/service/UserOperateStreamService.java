@@ -6,7 +6,7 @@ import com.urban.carbon.user.domain.entity.Account;
 import com.urban.carbon.user.domain.entity.Role;
 import com.urban.carbon.user.infrastructure.mapper.OperateStreamMapper;
 import com.urban.carbon.api.user.constants.RoleOperateType;
-import com.urban.carbon.api.user.constants.UserOperateTypeEnum;
+import com.urban.carbon.api.admin.constants.UserOperateTypeEnum;
 import com.urban.carbon.data.entity.OperateStream;
 import org.springframework.stereotype.Service;
 

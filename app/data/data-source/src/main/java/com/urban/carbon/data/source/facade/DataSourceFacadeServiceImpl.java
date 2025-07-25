@@ -1,7 +1,6 @@
 package com.urban.carbon.data.source.facade;
 
 import cn.hutool.core.lang.Assert;
-import com.urban.carbon.api.data.manager.request.condition.DataDSIdQueryCondition;
 import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.data.source.exception.DataSourceErrorCode;
 import com.urban.carbon.api.data.source.exception.DataSourceException;
@@ -17,7 +16,7 @@ import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.response.QueryResponse;
 import com.urban.carbon.data.source.domain.entity.DataSource;
-import com.urban.carbon.data.source.domain.entity.DataSourceConvertor;
+import com.urban.carbon.data.source.domain.entity.convertor.DataSourceConvertor;
 import com.urban.carbon.data.source.domain.service.DataSourceService;
 import com.urban.carbon.rpc.facade.Facade;
 import jodd.util.concurrent.ThreadFactoryBuilder;

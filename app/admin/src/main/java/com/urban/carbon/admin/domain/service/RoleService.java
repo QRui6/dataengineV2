@@ -4,8 +4,10 @@ import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.admin.domain.entity.Role;
+import com.urban.carbon.admin.domain.entity.User;
 import com.urban.carbon.admin.domain.entity.convertor.RoleConvertor;
 import com.urban.carbon.admin.infrasturcture.mapper.RoleMapper;
+import com.urban.carbon.admin.infrasturcture.mapper.UserMapper;
 import com.urban.carbon.api.admin.constants.RoleOperateTypeEnum;
 import com.urban.carbon.api.admin.exception.RoleErrorCode;
 import com.urban.carbon.api.admin.exception.RoleException;
@@ -21,11 +23,16 @@ import java.util.List;
 public class RoleService extends ServiceImpl<RoleMapper, Role> {
 
     private final RoleOperateStreamService roleOperateStreamService;
+
     private final RoleMapper roleMapper;
 
-    public RoleService(RoleOperateStreamService roleOperateStreamService, RoleMapper roleMapper) {
+    private final UserMapper userMapper;
+
+    public RoleService(RoleOperateStreamService roleOperateStreamService, RoleMapper roleMapper,
+                       UserMapper userMapper) {
         this.roleOperateStreamService = roleOperateStreamService;
         this.roleMapper = roleMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -123,8 +130,7 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
         Role role = getById(roleId);
         Assert.notNull(role, () -> new RoleException(RoleErrorCode.ROLE_NOT_EXIST));
         // 查询是否当前角色是否有未被删除的用户
-        List<User> userList = userMapper.selectList(
-                new QueryWrapper<User>().eq("role_id", roleId));
+        List<User> userList = userMapper.findByRoleId(roleId);
         Assert.isTrue(userList.isEmpty(), () -> new RoleException(RoleErrorCode.ROLE_ASSOCIATED_WITH_USER));
         OperateResponse<Boolean> response = new OperateResponse<>();
         // 删除数据

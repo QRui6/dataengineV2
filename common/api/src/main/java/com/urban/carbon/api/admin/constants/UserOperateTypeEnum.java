@@ -1,4 +1,4 @@
-package com.urban.carbon.api.user.constants;
+package com.urban.carbon.api.admin.constants;
 
 public enum UserOperateTypeEnum {
 
@@ -32,6 +32,7 @@ public enum UserOperateTypeEnum {
      */
     MODIFY,
 
+    CREATE,
     /**
      * 删除用户
      */
