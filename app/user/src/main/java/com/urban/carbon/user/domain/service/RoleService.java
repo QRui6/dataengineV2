@@ -8,7 +8,7 @@ import com.urban.carbon.user.domain.entity.Role;
 import com.urban.carbon.user.infrastructure.mapper.AccountMapper;
 import com.urban.carbon.user.infrastructure.mapper.RoleMapper;
 import com.urban.carbon.api.user.constants.RoleOperateType;
-import com.urban.carbon.api.user.constants.UserPermissionEnum;
+import com.urban.carbon.api.admin.constants.UserPermissionEnum;
 import com.urban.carbon.api.user.exception.UserManageErrorCode;
 import com.urban.carbon.api.user.exception.UserManageException;
 import com.urban.carbon.base.response.MultiResponse;

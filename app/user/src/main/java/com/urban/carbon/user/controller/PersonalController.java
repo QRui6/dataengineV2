@@ -8,7 +8,6 @@ import com.urban.carbon.user.domain.service.UserService;
 import com.urban.carbon.user.params.UserModifiedParam;
 import com.urban.carbon.api.user.exception.UserErrorCode;
 import com.urban.carbon.api.user.exception.UserException;
-import com.urban.carbon.api.user.response.data.BasicUserInfo;
 import com.urban.carbon.api.user.response.data.UserInfo;
 import com.urban.carbon.web.vo.Result;
 import jakarta.validation.Valid;
@@ -37,23 +36,6 @@ public class PersonalController {
             throw new UserException(UserErrorCode.USER_NOT_EXIST);
         }
         return Result.success(UserConvertor.INSTANCE.mapToVo(account));
-    }
-
-    /**
-     * 根据电话号码查询用户的基本信息。
-     *
-     * @param telephone 电话号码
-     * @return 用户基本信息
-     * @throws UserException 如果用户不存在
-     */
-    @Deprecated(since = "0.0.2", forRemoval = true)
-    @GetMapping("/queryUserByTel")
-    public Result<BasicUserInfo> queryUserByTel(String telephone) {
-        Account account = userService.findByTelephone(telephone);
-        if (account == null) {
-            throw new UserException(UserErrorCode.USER_NOT_EXIST);
-        }
-        return Result.success(UserConvertor.INSTANCE.mapToBasicVo(account));
     }
 
     /**
@@ -117,25 +99,26 @@ public class PersonalController {
      * @param file 上传的头像文件
      * @return 头像文件保存路径
      */
+    @Deprecated(since = "0.0.2", forRemoval = true)
     @PostMapping("/modifyProfilePhoto")
     public Result<String> modifyProfilePhoto(@RequestParam("file_data") MultipartFile file) {
         // 获取用户ID
-        String userId = (String) StpUtil.getLoginId();
-        if (file.isEmpty()) {
-            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-        }
-        FileUploadVO res = fileService.upload(file, Long.valueOf(userId));
-        if (!res.getUploadSuccess()) {
-            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-        }
-        Boolean result = userService.modifyAccount(
-                Long.valueOf(userId), null, null,
-                null, null).getSuccess();
-        if (!result) {
-            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
-        }
-        return Result.success(res.getFilePath());
-
+//        String userId = (String) StpUtil.getLoginId();
+//        if (file.isEmpty()) {
+//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+//        }
+//        FileUploadVO res = fileService.upload(file, Long.valueOf(userId));
+//        if (!res.getUploadSuccess()) {
+//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+//        }
+//        Boolean result = userService.modifyAccount(
+//                Long.valueOf(userId), null, null,
+//                null, null).getSuccess();
+//        if (!result) {
+//            throw new UserException(UserErrorCode.USER_UPLOAD_PICTURE_FAIL);
+//        }
+//        return Result.success(res.getFilePath());
+        return null;
     }
 
     /**

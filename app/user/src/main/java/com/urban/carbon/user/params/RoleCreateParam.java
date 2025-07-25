@@ -1,6 +1,6 @@
 package com.urban.carbon.user.params;
 
-import com.urban.carbon.api.user.constants.UserPermissionEnum;
+import com.urban.carbon.api.admin.constants.UserPermissionEnum;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
