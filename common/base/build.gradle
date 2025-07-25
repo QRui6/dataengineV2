@@ -1,12 +1,6 @@
 dependencies {
   // validation
   api(libs.spring.boot.validation)
-  // sensitive tool
-  api(libs.sensitive.logback)
-  // 引入 sensitive 核心依赖 TODO 这里排除了有警告的模块 未测试是否可行
-  api(libs.sensitive.core) {
-    exclude group: "com.alibaba", module: "fastjson"
-  }
   // hutool 工具依赖
   api(libs.hutool.all)
   // google guava 工具包

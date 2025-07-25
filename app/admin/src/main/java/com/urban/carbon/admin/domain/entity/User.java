@@ -3,7 +3,6 @@ package com.urban.carbon.admin.domain.entity;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
 import com.urban.carbon.api.admin.constants.UserStateEnum;
 import com.urban.carbon.data.entity.BaseEntity;
 import lombok.Getter;

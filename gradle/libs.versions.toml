@@ -9,7 +9,7 @@ dubbo = "3.3.5"
 mapstruct = "1.6.3"
 hutool = "5.8.39"
 common-lang3 = "3.18.0"
-sensitive = "1.7.0"
+#sensitive = "1.7.0"
 # spring-web = "6.1.21"
 httpclient = "5.5"
 redisson = "3.24.3"
@@ -70,8 +70,8 @@ hutool-all = { group = "cn.hutool", name = "hutool-all", version.ref = "hutool" 
 common-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "common-lang3" }
 
 # 敏感信息日志
-sensitive-logback = { group = "com.github.houbb", name = "sensitive-logback", version.ref = "sensitive" }
-sensitive-core = { group = "com.github.houbb", name = "sensitive-core", version.ref = "sensitive" }
+#sensitive-logback = { group = "com.github.houbb", name = "sensitive-logback", version.ref = "sensitive" }
+#sensitive-core = { group = "com.github.houbb", name = "sensitive-core", version.ref = "sensitive" }
 
 # http 客户端依赖
 httpclient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "httpclient" }
