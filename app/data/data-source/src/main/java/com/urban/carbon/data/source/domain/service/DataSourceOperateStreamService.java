@@ -1,20 +1,19 @@
 package com.urban.carbon.data.source.domain.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.urban.carbon.api.data.manager.constants.DataOperateType;
 import com.urban.carbon.api.data.source.constants.DataSourceOperateType;
 import com.urban.carbon.data.entity.OperateStream;
 import com.urban.carbon.data.source.domain.entity.DataSource;
-import com.urban.carbon.data.source.infrastructure.mapper.OperateStreamMapper;
+import com.urban.carbon.data.source.infrastructure.mapper.DataSourceOperateStreamMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class DataSourceOperateStreamService
-        extends ServiceImpl<OperateStreamMapper, OperateStream> {
+        extends ServiceImpl<DataSourceOperateStreamMapper, OperateStream> {
 
     public Long insertStream(DataSource dataSource, Long userId,
                              DataSourceOperateType type) {
@@ -43,12 +42,12 @@ public class DataSourceOperateStreamService
         // 设置操作类型
         stream.setType(type.name());
         // 记录参数
-//        stream.setParam(dataSource.toString());
         stream.setParam(dataSources.stream()
-                .map(dataSource -> dataSource.getId() + ":" + dataSource.toString())
+                .map(JSON::toJSONString)
                 .toList()
                 .stream()
-                .reduce(String::concat).toString());
+                .reduce(String::concat)
+                .toString());
         // 成功就返回id，失败就返回null
         return save(stream) ? stream.getId() : null;
     }

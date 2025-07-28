@@ -5,5 +5,5 @@ import com.urban.carbon.data.entity.OperateStream;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface OperateStreamMapper extends BaseMapper<OperateStream> {
+public interface DataSourceOperateStreamMapper extends BaseMapper<OperateStream> {
 }
