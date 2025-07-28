@@ -132,13 +132,16 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
     public List<GeoService> deleteService(List<Long> serviceIds, Long loginId) throws IOException {
         // 检查所有的id是否归属于loginId，同时是否可以被删除
         List<GeoService> geoServiceList = geoServiceMapper.findByLoginId(serviceIds, loginId);
-        // 逐个删除 TODO
+        // 逐个删除
         List<GeoService> successToReturn = new ArrayList<>();
         for (GeoService geoService : geoServiceList) {
+            // TODO 删除geoserver中的数据，存在问题，由于无法判断类型
             geoServerHttpUtils.removeFeatureType(geoService.getWorkspace(), geoService.getStoreName(),
                     geoService.getLayerName(), true);
-            geoServerHttpUtils.removeStore(geoService.getWorkspace(), geoService.getStoreName(),
-                    "datastores", true);
+            geoServerHttpUtils.removeShpStore(geoService.getWorkspace(), geoService.getStoreName(), true);
+            geoServerHttpUtils.removeCoverage(geoService.getWorkspace(), geoService.getStoreName(),
+                    geoService.getLayerName(), true);
+            geoServerHttpUtils.removeTifStore(geoService.getWorkspace(), geoService.getStoreName(), true);
             if (this.removeById(geoService)) {
                 successToReturn.add(geoService);
             }

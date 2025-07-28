@@ -221,23 +221,42 @@ public class GeoServerHttpUtils {
 
 
     /**
-     * 删除数据存储 (矢量或栅格)
+     * 删除数据存储 (矢量)
      *
      * @param workspaceName 工作空间名称
      * @param storeName     数据存储名称
-     * @param storeType     "datastores" (矢量) or "coveragestores" (栅格)
      * @param recurse       是否递归删除
      */
-    public String removeStore(String workspaceName, String storeName, String storeType, boolean recurse)
+    public String removeShpStore(String workspaceName, String storeName, boolean recurse)
             throws IOException {
         String url = geoServerProperties.getRestServiceBaseUrl() + "/workspaces/" +
-                workspaceName + "/" + storeType + "/" + storeName;
+                workspaceName + "/datastores/" + storeName;
         if (!resourceExists(url)) {
             log.warn("Store '{}' does not exist, deletion failed.", storeName);
             return storeName;
         }
         String resp = getDeleteResponse(url, recurse);
-        log.info("Store '{}' of type {} deleted successfully.", storeName, storeType);
+        log.info("Store '{}' deleted successfully.", storeName);
+        return resp;
+    }
+
+    /**
+     * 删除数据存储 (栅格)
+     *
+     * @param workspaceName 工作空间名称
+     * @param storeName     数据存储名称
+     * @param recurse       是否递归删除
+     */
+    public String removeTifStore(String workspaceName, String storeName, boolean recurse)
+            throws IOException {
+        String url = geoServerProperties.getRestServiceBaseUrl() + "/workspaces/" +
+                workspaceName + "/coveragestores/" + storeName;
+        if (!resourceExists(url)) {
+            log.warn("Store '{}' does not exist, deletion failed.", storeName);
+            return storeName;
+        }
+        String resp = getDeleteResponse(url, recurse);
+        log.info("Store '{}' deleted successfully.", storeName);
         return resp;
     }
 
