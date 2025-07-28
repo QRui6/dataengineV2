@@ -1,6 +1,5 @@
 package com.urban.carbon.personal.domain.entity;
 
-import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.urban.carbon.api.admin.constants.UserStateEnum;

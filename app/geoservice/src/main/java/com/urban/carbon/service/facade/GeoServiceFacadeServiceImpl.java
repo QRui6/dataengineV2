@@ -55,7 +55,6 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
                 request.getDataId(), request.getLoginId());
         // 查看文件后缀
         String filePath = fileResponse.getData().getFilePath();
-        String fileType = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
         // 发布服务
         GeoService geoService = geoServiceService.publishService(
                 fileResponse.getData(), request.getServiceName(), request.getFormatType(),
