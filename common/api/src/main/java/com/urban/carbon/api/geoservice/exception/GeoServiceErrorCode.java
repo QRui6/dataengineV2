@@ -29,7 +29,27 @@ public enum GeoServiceErrorCode implements ErrorCode {
     /**
      * 服务不存在
      */
-    SERVICE_NOT_FIND("SERVICE_NOT_FIND", "服务不存在");
+    SERVICE_NOT_FIND("SERVICE_NOT_FIND", "服务不存在"),
+
+    /**
+     * 服务更新失败
+     */
+    SERVICE_UPDATE_FAILED("SERVICE_UPDATE_FAILED", "服务更新失败"),
+
+    /**
+     * 服务未启用
+     */
+    SERVICE_NOT_START("SERVICE_NOT_START", "服务未启用"),
+
+    /**
+     * 服务不匹配
+     */
+    SERVICE_NOT_MATCH("SERVICE_NOT_MATCH", "服务不匹配"),
+
+    /**
+     * 数据类型不匹配
+     */
+    DATA_TYPE_NOT_MATCH("DATA_TYPE_NOT_MATCH", "数据类型不匹配");
 
     private final String code;
 

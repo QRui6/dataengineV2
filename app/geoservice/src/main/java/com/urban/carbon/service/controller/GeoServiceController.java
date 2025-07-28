@@ -8,20 +8,19 @@ import com.urban.carbon.api.geoservice.response.data.GeoServiceInfo;
 import com.urban.carbon.api.geoservice.service.GeoServiceFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
-import com.urban.carbon.base.response.SingleResponse;
+import com.urban.carbon.base.response.QueryResponse;
 import com.urban.carbon.service.params.GeoServiceModifiedParam;
 import com.urban.carbon.service.vo.DeleteResponseVO;
 import com.urban.carbon.web.util.MultiResultConvertor;
 import com.urban.carbon.web.vo.MultiResult;
 import com.urban.carbon.web.vo.Result;
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
-@SpringBootApplication
-@EnableDubbo
+@RestController
+@RequestMapping("/api/service")
 public class GeoServiceController {
 
     private final GeoServiceFacadeService geoServiceFacadeService;
@@ -53,12 +52,12 @@ public class GeoServiceController {
         }
         request.setCurrentPage(currentPage);
         request.setPageSize(pageSize);
-        PageResponse<GeoServiceInfo> response = geoServiceFacadeService.queryService(request);
+        PageResponse<GeoServiceInfo> response = geoServiceFacadeService.pageQueryService(request);
         return MultiResultConvertor.convert(response);
     }
 
     @DeleteMapping("/delete")
-    public Result<DeleteResponseVO> deleteService(@RequestParam List<Long> serviceIds) {
+    public Result<DeleteResponseVO> deleteService(@RequestParam List<Long> serviceIds) throws IOException {
         String loginId = (String) StpUtil.getLoginId();
         GeoServiceQueryRequest request = new GeoServiceQueryRequest(serviceIds, Long.valueOf(loginId));
         OperateResponse<List<Long>> response = geoServiceFacadeService.deleteService(request);
@@ -68,7 +67,8 @@ public class GeoServiceController {
     @GetMapping("/query/{serviceMd5}")
     public Result<GeoServiceInfo> queryService(@PathVariable String serviceMd5, @RequestParam Long serviceId) {
         String loginId = (String) StpUtil.getLoginId();
-        SingleResponse<GeoServiceInfo> service = geoServiceFacadeService.getService(serviceId, serviceMd5);
+        QueryResponse<GeoServiceInfo> service = geoServiceFacadeService.queryService(
+                serviceId, serviceMd5, Long.valueOf(loginId));
         return Result.success(service.getData());
     }
 

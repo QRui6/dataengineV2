@@ -1,0 +1,6 @@
+dependencies {
+  // 引入评价体系的依赖
+  implementation(libs.spring.boot.actuator)
+  // 引入 Prometheus 依赖
+  implementation(libs.micrometer.registry.prometheus)
+}

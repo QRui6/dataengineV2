@@ -15,7 +15,7 @@ public interface GeoServiceMapper extends BaseMapper<GeoService> {
      * @param loginId 登录用户ID
      * @return 查询结果
      */
-    List<Long> findByLoginId(List<Long> serviceIds, Long loginId);
+    List<GeoService> findByLoginId(List<Long> serviceIds, Long loginId);
 
     /**
      * 根据ID查询

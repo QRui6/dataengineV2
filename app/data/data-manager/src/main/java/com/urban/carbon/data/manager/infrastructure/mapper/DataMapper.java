@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.urban.carbon.data.manager.domain.entity.Data;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface DataMapper extends BaseMapper<Data> {
 
@@ -31,4 +33,13 @@ public interface DataMapper extends BaseMapper<Data> {
      * @return 存在返回1，不存在返回0
      */
     int existsData(Long dsId);
+
+    /**
+     * 根据dataIds查询数据
+     *
+     * @param ids 数据ID列表
+     * @param loginId 登录用户ID
+     * @return 查询结果
+     */
+    List<Data> findByDataIds(List<Long> ids, Long loginId);
 }

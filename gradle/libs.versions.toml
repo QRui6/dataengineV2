@@ -1,16 +1,12 @@
 [versions]
 springboot = "3.5.3"
 lombok = "1.18.30"
-# spring-cloud = "2025.0.0"
-# spring-cloud-alibaba = "2023.0.3.3"
 guava = "33.4.8-jre"
 fastjson2 = "2.0.57"
 dubbo = "3.3.5"
 mapstruct = "1.6.3"
 hutool = "5.8.39"
 common-lang3 = "3.18.0"
-#sensitive = "1.7.0"
-# spring-web = "6.1.21"
 httpclient = "5.5"
 redisson = "3.24.3"
 caffeine = "3.1.8"
@@ -27,9 +23,13 @@ minio = "8.5.17"
 hadoop-client = "3.4.1"
 avro = "1.11.4"
 jline = "3.25.0"
+# spring-cloud = "2025.0.0"
+# spring-cloud-alibaba = "2023.0.3.3"
+# sensitive = "1.7.0"
+# spring-web = "6.1.21"
+
 
 [libraries]
-
 # 注解处理相关依赖
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 mapstruct = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
@@ -50,10 +50,11 @@ spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-b
 spring-boot-starter-websocket = { group = "org.springframework.boot", name = "spring-boot-starter-websocket", version.ref = "springboot" }
 
 # spring boot 相关依赖
-spring-boot-parent = { group = "org.springframework.boot", name = "spring-boot-starter-parent", version.ref = "springboot" }
 # spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springboot" }
+spring-boot-parent = { group = "org.springframework.boot", name = "spring-boot-starter-parent", version.ref = "springboot" }
 spring-boot-starter = { group = "org.springframework.boot", name = "spring-boot-starter", version.ref = "springboot" }
 spring-boot-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation", version.ref = "springboot" }
+spring-boot-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator", version.ref = "springboot"}
 
 # spring cloud TODO 这里使用 MavenBom 的方式引入，该种方式要求直接使用字符串加上版本号来确定
 # spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -70,8 +71,8 @@ hutool-all = { group = "cn.hutool", name = "hutool-all", version.ref = "hutool" 
 common-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "common-lang3" }
 
 # 敏感信息日志
-#sensitive-logback = { group = "com.github.houbb", name = "sensitive-logback", version.ref = "sensitive" }
-#sensitive-core = { group = "com.github.houbb", name = "sensitive-core", version.ref = "sensitive" }
+# sensitive-logback = { group = "com.github.houbb", name = "sensitive-logback", version.ref = "sensitive" }
+# sensitive-core = { group = "com.github.houbb", name = "sensitive-core", version.ref = "sensitive" }
 
 # http 客户端依赖
 httpclient = { group = "org.apache.httpcomponents.client5", name = "httpclient5", version.ref = "httpclient" }
@@ -82,6 +83,7 @@ spring-boot-starter-data-redis = { group = "org.springframework.boot", name = "s
 redisson-spring-boot-starter = { group = "org.redisson", name = "redisson-spring-boot-starter", version.ref = "redisson" }
 caffeine = { group = "com.github.ben-manes.caffeine", name = "caffeine", version.ref = "caffeine" }
 jetcache-starter-redisson = { group = "com.alicp.jetcache", name = "jetcache-starter-redisson", version.ref = "jetcache" }
+
 # 修复 redisson 的依赖
 redisson = { group = "org.redisson", name = "redisson", version.ref = "redisson" }
 
@@ -97,9 +99,9 @@ postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "pos
 druid = { group = "com.alibaba", name = "druid", version.ref = "druid" }
 
 # Sa-Token
+# commons-pool2 = { group = "org.apache.commons", name = "commons-pool2" }
 sa-token-spring-boot3-starter = { group = "cn.dev33", name = "sa-token-spring-boot3-starter", version.ref = "sa-token" }
 sa-token-redis-jackson = { group = "cn.dev33", name = "sa-token-redis-jackson", version.ref = "sa-token" }
-# commons-pool2 = { group = "org.apache.commons", name = "commons-pool2" }
 
 # AOP 依赖
 aspectjrt = { group = "org.aspectj", name = "aspectjrt", version.ref = "aop" }
@@ -111,8 +113,12 @@ apm-toolkit-trace = { group = "org.apache.skywalking", name = "apm-toolkit-trace
 
 # 文件上传相关配置
 minio = { group = "io.minio", name = "minio", version.ref = "minio" }
-hadoop-client = { group = "org.apache.hadoop", name = "hadoop-client", version.ref = "hadoop-client"}
+hadoop-client = { group = "org.apache.hadoop", name = "hadoop-client", version.ref = "hadoop-client" }
 jcl-over-slf4j = { group = "org.slf4j", name = "jcl-over-slf4j" }
+
 # 修复 hadoop 3.4.1 存在的危险依赖
 avro = { group = "org.apache.avro", name = "avro", version.ref = "avro" }
-jline = { group = "org.jline", name = "jline", version.ref = "jline"}
+jline = { group = "org.jline", name = "jline", version.ref = "jline" }
+
+# prometheus
+micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus" }

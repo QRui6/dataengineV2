@@ -14,14 +14,12 @@ import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.data.manager.domain.entity.Data;
 import com.urban.carbon.data.manager.domain.entity.DataConvertor;
 import com.urban.carbon.data.manager.infrastructure.mapper.DataMapper;
-import jodd.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.*;
 
 @Service
 @Slf4j
@@ -102,17 +100,7 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
         // 设置数据状态为完成
         data.setStatus(FileUploadStatus.COMPLETED.name());
         // 设置修改时间
-        data.setGmtModified(new Date());
-        if (this.saveOrUpdate(data)) {
-            // 插入操作记录
-            Long insertStream = dataOperateStreamService.insertStream(
-                    data, loginId, DataOperateType.UPDATE);
-            // 确保操作记录插入成功
-            Assert.notNull(insertStream, () -> new DataException(
-                    DataErrorCode.DATA_OPERATE_STREAM_FAIL));
-            return true;
-        }
-        return false;
+        return saveAndUpdate(data, loginId);
     }
 
     /**
@@ -130,6 +118,10 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
         // 标记数据为已删除，以逻辑删除的方式从数据库中移除该数据
         data.setDeleted(1);
         // 设置修改时间
+        return saveAndUpdate(data, loginId);
+    }
+
+    private Boolean saveAndUpdate(Data data, Long loginId) {
         data.setGmtModified(new Date());
         // 调用updateById方法，根据数据的ID更新数据库中的记录
         if (this.saveOrUpdate(data)) {
@@ -186,45 +178,23 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
     }
 
     /**
-     * 删除数据源 TODO 修改写入记录
+     * 删除数据源
      *
      * @param ids 待删除的数据源ID列表
      * @return 删除成功的数据源ID列表
      */
     public List<Long> deleteData(List<Long> ids, Long loginId) {
-        List<Long> dataSuccess;
-        if (ids.size() > 5) {
-            // 创建自定义线程池
-            ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
-                    .setNameFormat("delete-data-%d").get();
-            // 创建线程池并执行并行处理
-            try (ExecutorService pool = new ThreadPoolExecutor(
-                    5, 5, 0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(), namedThreadFactory)) {
-                // 过滤出可以删除的数据源：数据不存在且删除成功的数据源
-                dataSuccess = ids.stream()
-                        .filter(id -> {
-                            try {
-                                return pool.submit(() -> this.existsData(id) == 0 &&
-                                        this.removeById(id)).get();
-                            } catch (InterruptedException | ExecutionException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }).toList();
-            }
-        } else {
-            // 数据源数量小于等于5时，使用普通串行方式处理
-            dataSuccess = ids.stream()
-                    .filter(id -> this.existsData(id) == 0 &&
-                            this.removeById(id))
-                    .toList();
-        }
-//        // 插入操作记录
-//        Long insertStream = dataOperateStreamService.insertStream(
-//                data, loginId, DataOperateType.UPDATE);
-//        // 确保操作记录插入成功
-//        Assert.notNull(insertStream, () -> new DataException(
-//                DataErrorCode.DATA_OPERATE_STREAM_FAIL));
+        List<Data> dataList = dataMapper.findByDataIds(ids, loginId);
+        List<Long> dataSuccess = dataList.stream()
+                .filter(data -> this.existsData(data.getId()) == 0 &&
+                        this.removeById(data.getId()))
+                .toList().stream().map(Data::getId).toList();
+        // 插入操作记录
+        Long insertStream = dataOperateStreamService.insertStream(
+                dataList, loginId, DataOperateType.UPDATE);
+        // 确保操作记录插入成功
+        Assert.notNull(insertStream, () -> new DataException(
+                DataErrorCode.DATA_OPERATE_STREAM_FAIL));
         return dataSuccess;
     }
 

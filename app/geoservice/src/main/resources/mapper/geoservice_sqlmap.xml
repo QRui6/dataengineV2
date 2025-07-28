@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.urban.carbon.service.infrastructure.mapper.ServiceMapper">
+<mapper namespace="com.urban.carbon.service.infrastructure.mapper.GeoServiceMapper">
 
   <!-- 定义resultMap -->
-  <resultMap id="serviceBaseMapperResult" type="com.urban.carbon.service.domain.entity.ServiceEntity">
+  <resultMap id="serviceBaseMapperResult" type="com.urban.carbon.service.domain.entity.GeoService">
     <id column="ID" property="id" />
     <result column="DS_ID" property="dsId" />
     <result column="DATA_ID" property="dataId" />
@@ -25,8 +25,8 @@
     <result column="SERVICE_DESC" property="serviceDesc" />
   </resultMap>
 
-  <select id="findByLoginId" resultType="java.lang.Long">
-    SELECT id
+  <select id="findByLoginId" resultType="serviceBaseMapperResult">
+    SELECT *
     FROM "public"."service"
     WHERE "user_id" = #{loginId} AND "deleted" = 0 AND
     <foreach item="serviceId" collection="serviceIds" separator="," open="id IN (" close=")">

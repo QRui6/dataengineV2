@@ -225,7 +225,7 @@ public class GeoServerHttpUtils {
      *
      * @param workspaceName 工作空间名称
      * @param storeName     数据存储名称
-     * @param storeType     "data stores" (矢量) or "coverage stores" (栅格)
+     * @param storeType     "datastores" (矢量) or "coveragestores" (栅格)
      * @param recurse       是否递归删除
      */
     public String removeStore(String workspaceName, String storeName, String storeType, boolean recurse)

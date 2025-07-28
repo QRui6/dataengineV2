@@ -1,5 +1,8 @@
 package com.urban.carbon.service.facade;
 
+import com.urban.carbon.api.data.manager.request.DataQueryRequest;
+import com.urban.carbon.api.data.manager.response.data.DataInfo;
+import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.geoservice.exception.GeoServiceErrorCode;
 import com.urban.carbon.api.geoservice.exception.GeoServiceException;
 import com.urban.carbon.api.geoservice.request.GeoServiceModifiedRequest;
@@ -12,14 +15,14 @@ import com.urban.carbon.api.geoservice.response.data.GeoServiceInfo;
 import com.urban.carbon.api.geoservice.service.GeoServiceFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
-import com.urban.carbon.base.response.SingleResponse;
+import com.urban.carbon.base.response.QueryResponse;
 import com.urban.carbon.rpc.facade.Facade;
 import com.urban.carbon.service.domain.entity.GeoService;
 import com.urban.carbon.service.domain.entity.GeoServiceConvertor;
 import com.urban.carbon.service.domain.service.GeoServiceService;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.apache.tomcat.jni.FileInfo;
 
+import java.io.IOException;
 import java.util.List;
 
 @DubboService(version = "0.0.1")
@@ -31,22 +34,38 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
     private final GeoServiceService geoServiceService;
 
     /**
+     * DataFacadeService 服务
+     */
+    private final DataFacadeService dataFacadeService;
+
+    /**
      * 构造函数
      *
      * @param geoServiceService GeoServiceService 服务
      */
-    public GeoServiceFacadeServiceImpl(GeoServiceService geoServiceService) {
+    public GeoServiceFacadeServiceImpl(GeoServiceService geoServiceService, DataFacadeService dataFacadeService) {
         this.geoServiceService = geoServiceService;
+        this.dataFacadeService = dataFacadeService;
     }
 
     @Override
     @Facade
     public OperateResponse<GeoServiceInfo> publishService(GeoServiceModifiedRequest request) {
         // 校验 request 中提供的数据是否与提供的类型是匹配的
-        FileInfo fileInfo = geoServiceService.checkDataType(request, request.getLoginId());
-        request.setFileInfo(fileInfo);
+        QueryResponse<DataInfo> fileResponse = dataFacadeService.findById(
+                request.getDataId(), request.getLoginId());
+        // 查看文件后缀
+        String filePath = fileResponse.getData().getFilePath();
+        String fileType = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
+        // 后缀不匹配，或者后缀为zip，但服务类型不是shp，就抛出异常
+        if (!request.getServiceFileType().getName().equals(fileType) &&
+                !(fileType.equals("ZIP") && request.getServiceFileType().getName().equals("SHP"))) {
+            throw new GeoServiceException(GeoServiceErrorCode.DATA_TYPE_NOT_MATCH);
+        }
         // 发布服务
-        GeoService geoService = geoServiceService.publishService(request, request.getLoginId());
+        GeoService geoService = geoServiceService.publishService(
+                fileResponse.getData(), request.getServiceName(), request.getFormatType(),
+                request.getFormatType(), request.getLoginId());
         OperateResponse<GeoServiceInfo> response = new OperateResponse<>();
         response.setSuccess(true);
         response.setData(GeoServiceConvertor.INSTANCE.mapToVo(geoService));
@@ -54,7 +73,7 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
     }
 
     @Override
-    public PageResponse<GeoServiceInfo> queryService(GeoServicePageQueryRequest request) {
+    public PageResponse<GeoServiceInfo> pageQueryService(GeoServicePageQueryRequest request) {
         PageResponse<GeoService> result;
         if (request.getCondition() instanceof GeoServiceNameQueryCondition) {
             result = geoServiceService.queryService(
@@ -74,28 +93,40 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
     }
 
     @Override
-    public OperateResponse<List<Long>> deleteService(GeoServiceQueryRequest request) {
-        return geoServiceService.deleteService(
+    public OperateResponse<List<Long>> deleteService(GeoServiceQueryRequest request) throws IOException {
+        List<GeoService> geoServices = geoServiceService.deleteService(
                 ((GeoServiceIdsQueryCondition) request.getCondition()).getIds(), request.getLoginId());
-    }
-
-    @Override
-    public SingleResponse<GeoServiceInfo> getService(Long serviceId, String serviceMd5) {
-        return null;
-    }
-
-    @Override
-    public SingleResponse<GeoServiceInfo> getService(Long serviceId, String serviceMd5, Long loginId) {
-        return geoServiceService.getService(serviceId, serviceMd5, loginId);
+        List<Long> list = geoServices.stream().map(GeoService::getId).toList();
+        OperateResponse<List<Long>> response = new OperateResponse<>();
+        response.setSuccess(true);
+        response.setData(list);
+        return response;
     }
 
     @Override
     public OperateResponse<GeoServiceInfo> enableService(Long serviceId, Long loginId) {
-        return null;
+        GeoService geoService = geoServiceService.enableOrDisableService(serviceId, loginId, 1);
+        OperateResponse<GeoServiceInfo> response = new OperateResponse<>();
+        response.setSuccess(true);
+        response.setData(GeoServiceConvertor.INSTANCE.mapToVo(geoService));
+        return response;
     }
 
     @Override
     public OperateResponse<GeoServiceInfo> disableService(Long serviceId, Long loginId) {
-        return null;
+        GeoService geoService = geoServiceService.enableOrDisableService(serviceId, loginId, 0);
+        OperateResponse<GeoServiceInfo> response = new OperateResponse<>();
+        response.setSuccess(true);
+        response.setData(GeoServiceConvertor.INSTANCE.mapToVo(geoService));
+        return response;
+    }
+
+    @Override
+    public QueryResponse<GeoServiceInfo> queryService(Long serviceId, String serviceMd5, Long loginId) {
+        GeoService service = geoServiceService.getService(serviceId, serviceMd5, loginId);
+        QueryResponse<GeoServiceInfo> response = new QueryResponse<>();
+        response.setSuccess(true);
+        response.setData(GeoServiceConvertor.INSTANCE.mapToVo(service));
+        return response;
     }
 }

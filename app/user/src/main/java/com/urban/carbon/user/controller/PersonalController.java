@@ -3,7 +3,6 @@ package com.urban.carbon.user.controller;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.urban.carbon.api.admin.request.UserModifyRequest;
-import com.urban.carbon.api.admin.request.UserQueryRequest;
 import com.urban.carbon.api.admin.service.UserManagerFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.api.admin.exception.UserErrorCode;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/user")

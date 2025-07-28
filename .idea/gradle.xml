@@ -30,6 +30,7 @@
             <option value="$PROJECT_DIR$/common/geoserver" />
             <option value="$PROJECT_DIR$/common/limiter" />
             <option value="$PROJECT_DIR$/common/lock" />
+            <option value="$PROJECT_DIR$/common/prometheus" />
             <option value="$PROJECT_DIR$/common/rpc" />
             <option value="$PROJECT_DIR$/common/sa-token" />
             <option value="$PROJECT_DIR$/common/skywalking" />
