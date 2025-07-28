@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.urban.carbon.service.infrastructure.mapper.ServiceMapper">
+
+  <!-- 定义resultMap -->
+  <resultMap id="serviceBaseMapperResult" type="com.urban.carbon.service.domain.entity.ServiceEntity">
+    <id column="ID" property="id" />
+    <result column="DS_ID" property="dsId" />
+    <result column="DATA_ID" property="dataId" />
+    <result column="USER_ID" property="userId" />
+    <result column="DELETED" property="deleted" />
+    <result column="STARTED" property="started" />
+    <result column="LOCK_VERSION" property="lockVersion" />
+    <result column="SERVICE_SRS" property="serviceSrs" />
+    <result column="SERVICE_PROJ" property="serviceProj" />
+    <result column="GMT_CREATE" property="gmtCreate" />
+    <result column="GMT_MODIFIED" property="gmtModified" />
+    <result column="WORKSPACE" property="workspace" />
+    <result column="STORE_NAME" property="storeName" />
+    <result column="LAYER_NAME" property="layerName" />
+    <result column="SERVICE_NAME" property="serviceName" />
+    <result column="SERVICE_URL" property="serviceUrl" />
+    <result column="ALLOW_TYPES" property="allowTypes" />
+    <result column="SERVICE_DESC" property="serviceDesc" />
+  </resultMap>
+
+  <select id="findByLoginId" resultType="java.lang.Long">
+    SELECT id
+    FROM "public"."service"
+    WHERE "user_id" = #{loginId} AND "deleted" = 0 AND
+    <foreach item="serviceId" collection="serviceIds" separator="," open="id IN (" close=")">
+      #{serviceId}
+    </foreach>;
+  </select>
+
+  <select id="findById" resultMap="serviceBaseMapperResult">
+    SELECT *
+    FROM "public"."service"
+    WHERE "id" = #{serviceId} AND "deleted" = 0 AND "user_id" = #{loginId};
+  </select>
+
+</mapper>

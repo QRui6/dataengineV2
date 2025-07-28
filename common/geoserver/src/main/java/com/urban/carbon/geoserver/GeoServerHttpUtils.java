@@ -4,6 +4,7 @@ import com.urban.carbon.geoserver.config.GeoServerProperties;
 import com.urban.carbon.geoserver.entity.*;
 import com.urban.carbon.geoserver.exception.GeoServerErrorCode;
 import com.urban.carbon.geoserver.exception.GeoServerException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -33,10 +34,25 @@ import java.util.Map;
 @Slf4j
 public class GeoServerHttpUtils {
 
+    /**
+     * HTTP 客户端
+     */
     private final HttpClientBuilder httpClientBuilder;
+
+    /**
+     * GeoServer 配置类
+     */
+    @Getter
     private final GeoServerProperties geoServerProperties; // 注入配置类
 
+    /**
+     *  接受参数的类型是 JSON
+     */
     private static final String ACCEPT_TYPE_JSON = "application/json";
+
+    /**
+     * 内容的类型是 JSON
+     */
     private static final String CONTENT_TYPE_JSON = "application/json";
 
     // 使用构造函数注入依赖
