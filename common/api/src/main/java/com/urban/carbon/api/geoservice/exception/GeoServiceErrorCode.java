@@ -49,7 +49,27 @@ public enum GeoServiceErrorCode implements ErrorCode {
     /**
      * 数据类型不匹配
      */
-    DATA_TYPE_NOT_MATCH("DATA_TYPE_NOT_MATCH", "数据类型不匹配");
+    DATA_TYPE_NOT_MATCH("DATA_TYPE_NOT_MATCH", "数据类型不匹配"),
+
+    /**
+     * 发布shp数据源失败
+     */
+    PUBLISH_SHP_DATASTORE_FAIL("PUBLISH_SHP_DATASTORE_FAIL", "发布shp数据源失败"),
+
+    /**
+     * 发布shp图层失败
+     */
+    PUBLISH_SHP_LAYER_FAIL("PUBLISH_SHP_LAYER_FAIL", "发布shp图层失败"),
+
+    /**
+     * 发布tif数据源失败
+     */
+    PUBLISH_TIF_DATASTORE_FAIL("PUBLISH_TIF_DATASTORE_FAIL", "发布tif数据源失败"),
+
+    /**
+     * 发布tif图层失败
+     */
+    PUBLISH_TIF_LAYER_FAIL("PUBLISH_TIF_LAYER_FAIL", "发布tif图层失败");
 
     private final String code;
 

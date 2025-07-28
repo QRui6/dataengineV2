@@ -61,14 +61,23 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
         String workspaceName = geoServerHttpUtils.getGeoServerProperties().getWorkspace();
         Integer srs = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties().getGeoCode());
         Integer proj = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties().getGeoProjection());
+        String fileType = dataInfo.getDataType();
         // 调用 GeoServerService 发布对应类型的服务
         try {
             // 1. 创建工作空间（如果不存在）
             geoServerHttpUtils.createWorkspace(workspaceName);
-            // 2. 创建矢量数据存储 (Shapefile)
-            geoServerHttpUtils.createShapefileDataStore(workspaceName, storeName, filePath);
-            // 3. 创建 FeatureType (发布矢量图层服务)
-            geoServerHttpUtils.createFeatureType(workspaceName, storeName, storeName);
+            switch (fileType) {
+                case "ZIP":
+                case "SHP":
+                    publishShpService(workspaceName, storeName, filePath);
+                    break;
+                case "TIF":
+                    publishTifService(workspaceName, storeName, filePath);
+                    break;
+                default:
+                    throw new GeoServiceException(GeoServiceErrorCode.DATA_TYPE_NOT_MATCH);
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -86,6 +95,26 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
             return geoService;
         }
         return null;
+    }
+
+    private void publishShpService(String workspaceName, String storeName, String filePath) throws IOException {
+        // 创建矢量数据存储 (Shapefile)
+        Assert.notNull(geoServerHttpUtils.createShapefileDataStore(workspaceName, storeName, filePath),
+                () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_SHP_DATASTORE_FAIL));
+        // 创建 FeatureType (发布矢量图层服务)
+        geoServerHttpUtils.createFeatureType(workspaceName, storeName, storeName);
+        Assert.notNull(geoServerHttpUtils.createFeatureType(workspaceName, storeName, storeName),
+                () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_SHP_LAYER_FAIL));
+    }
+
+    private void publishTifService(String workspaceName, String storeName, String filePath) throws IOException {
+        // 创建栅格数据存储 (TIF)
+        Assert.notNull(geoServerHttpUtils.createCoverageStore(workspaceName, storeName, filePath),
+                () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_TIF_DATASTORE_FAIL));
+        // 创建 Coverage (发布栅格图层服务)
+        geoServerHttpUtils.createCoverage(workspaceName, storeName, storeName);
+        Assert.notNull(geoServerHttpUtils.createCoverage(workspaceName, storeName, storeName),
+                () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_TIF_LAYER_FAIL));
     }
 
     public PageResponse<GeoService> queryService(

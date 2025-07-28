@@ -57,11 +57,6 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
         // 查看文件后缀
         String filePath = fileResponse.getData().getFilePath();
         String fileType = filePath.substring(filePath.lastIndexOf(".") + 1).toUpperCase();
-        // 后缀不匹配，或者后缀为zip，但服务类型不是shp，就抛出异常
-        if (!request.getServiceFileType().getName().equals(fileType) &&
-                !(fileType.equals("ZIP") && request.getServiceFileType().getName().equals("SHP"))) {
-            throw new GeoServiceException(GeoServiceErrorCode.DATA_TYPE_NOT_MATCH);
-        }
         // 发布服务
         GeoService geoService = geoServiceService.publishService(
                 fileResponse.getData(), request.getServiceName(), request.getFormatType(),
