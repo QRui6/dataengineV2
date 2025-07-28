@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: data-engine-personal
+    log:
+      path: /root/Documents/output/dataengine
+  config:
+    import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml,classpath:geoserver.yml,classpath:sa-token.yml
+
+dubbo:
+  protocol:
+    port: 30003
+  application:
+    qos-port: 20003
+
+server:
+  port: 8084

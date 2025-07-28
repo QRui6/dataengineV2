@@ -25,7 +25,7 @@
     <result column="SERVICE_DESC" property="serviceDesc" />
   </resultMap>
 
-  <select id="findByLoginId" resultType="serviceBaseMapperResult">
+  <select id="findByLoginId" resultMap="serviceBaseMapperResult">
     SELECT *
     FROM "public"."service"
     WHERE "user_id" = #{loginId} AND "deleted" = 0 AND

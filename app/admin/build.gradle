@@ -8,5 +8,6 @@ dependencies {
   implementation(project(":common:rpc"))
   implementation(project(":common:data-source-config"))
   implementation(project(":common:sa-token"))
+  implementation(project(":common:skywalking"))
   implementation(project(":common:web"))
 }

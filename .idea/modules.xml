@@ -6,16 +6,21 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/data/data-manager/DataEngineV2.app.data.data-manager.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/data/data-manager/DataEngineV2.app.data.data-manager.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/data/data-manager/DataEngineV2.app.data.data-manager.test.iml" filepath="$PROJECT_DIR$/.idea/modules/app/data/data-manager/DataEngineV2.app.data.data-manager.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/data/data-source/DataEngineV2.app.data.data-source.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/data/data-source/DataEngineV2.app.data.data-source.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/user/DataEngineV2.app.user.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/user/DataEngineV2.app.user.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/geoservice/DataEngineV2.app.geoservice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/geoservice/DataEngineV2.app.geoservice.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/personal/DataEngineV2.app.personal.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/personal/DataEngineV2.app.personal.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auth/DataEngineV2.auth.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auth/DataEngineV2.auth.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/api/DataEngineV2.common.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/api/DataEngineV2.common.api.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/base/DataEngineV2.common.base.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/base/DataEngineV2.common.base.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/cache/DataEngineV2.common.cache.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/cache/DataEngineV2.common.cache.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/data-source-config/DataEngineV2.common.data-source-config.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/data-source-config/DataEngineV2.common.data-source-config.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/file/DataEngineV2.common.file.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/file/DataEngineV2.common.file.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/geoserver/DataEngineV2.common.geoserver.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/geoserver/DataEngineV2.common.geoserver.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/limiter/DataEngineV2.common.limiter.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/limiter/DataEngineV2.common.limiter.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/lock/DataEngineV2.common.lock.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/lock/DataEngineV2.common.lock.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/rpc/DataEngineV2.common.rpc.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/rpc/DataEngineV2.common.rpc.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/sa-token/DataEngineV2.common.sa-token.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/sa-token/DataEngineV2.common.sa-token.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/web/DataEngineV2.common.web.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/web/DataEngineV2.common.web.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gateway/DataEngineV2.gateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/gateway/DataEngineV2.gateway.main.iml" />
     </modules>
   </component>
 </project>

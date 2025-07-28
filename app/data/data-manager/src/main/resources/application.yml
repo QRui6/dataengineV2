@@ -8,9 +8,9 @@ spring:
 
 dubbo:
   protocol:
-    port: 33335
+    port: 30001
   application:
-    qos-port: 22223
+    qos-port: 20001
 
 server:
-  port: 8085
+  port: 8083

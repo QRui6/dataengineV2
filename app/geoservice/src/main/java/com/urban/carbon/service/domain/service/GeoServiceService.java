@@ -84,7 +84,7 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
         String serviceUrl = RandomNameGenerator.generateRandomURL();
         // 将返回的结果封装成 ServiceEntity 写入数据库
         GeoService geoService = new GeoService();
-        geoService.createService(dataInfo.getDsId(), dataInfo.getId(), loginId, 1, srs, proj,
+        geoService.createService(dataInfo.getDataSourceId(), dataInfo.getId(), loginId, 1, srs, proj,
                 workspaceName, storeName, storeName, serviceName, serviceUrl, allowTypes, serviceDesc);
         // 记录操作
         if (this.saveOrUpdate(geoService)) {

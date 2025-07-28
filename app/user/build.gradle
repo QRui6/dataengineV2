@@ -1,9 +1,0 @@
-dependencies {
-  implementation(project(":common:base"))
-  implementation(project(":common:api"))
-  implementation(project(":common:config"))
-  implementation(project(":common:rpc"))
-  implementation(project(":common:data-source-config"))
-  implementation(project(":common:sa-token"))
-  implementation(project(":common:web"))
-}

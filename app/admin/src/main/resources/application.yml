@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: data-engine-admin
+    log:
+      path: /root/Documents/output/dataengine
+  config:
+    import: classpath:base.yml,classpath:datasource.yml,classpath:rpc.yml,classpath:cache.yml,classpath:file.yml,classpath:sa-token.yml
+
+dubbo:
+  protocol:
+    port: 30000
+  application:
+    qos-port: 20000
+
+server:
+  port: 8082

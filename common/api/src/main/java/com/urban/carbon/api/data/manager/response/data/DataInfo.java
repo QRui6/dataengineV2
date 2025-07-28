@@ -28,7 +28,7 @@ public class DataInfo implements Serializable {
     /**
      * 数据源id
      */
-    private Long dsId;
+    private Long dataSourceId;
 
     /**
      * 数据源名称

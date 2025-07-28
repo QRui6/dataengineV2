@@ -1,6 +1,5 @@
 package com.urban.carbon.service.facade;
 
-import com.urban.carbon.api.data.manager.request.DataQueryRequest;
 import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.geoservice.exception.GeoServiceErrorCode;

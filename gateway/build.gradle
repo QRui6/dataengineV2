@@ -1,0 +1,34 @@
+dependencies {
+  implementation(project(":common:base"))
+
+  implementation(project(":common:limiter")) {
+    exclude group: 'org.springframework', module: 'spring-web'
+    exclude group: 'org.springframework', module: 'spring-webmvc'
+  }
+
+  implementation(project(":common:config"))
+
+  implementation(project(":common:api"))
+
+  // 引入 sa-token
+  implementation(libs.sa.token.reactor.spring.boot3.starter) {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
+  }
+  implementation(libs.sa.token.redis.jackson)
+
+  // load balancer
+  implementation(libs.spring.cloud.starter.loadbalancer) {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
+
+  // gateway
+  implementation(libs.spring.cloud.starter.gateway) {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
+
+  implementation(project(":common:skywalking"))
+}

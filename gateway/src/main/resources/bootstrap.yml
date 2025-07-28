@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: data-engine-gateway
+  config:
+    import: classpath:base.yml,classpath:config.yml

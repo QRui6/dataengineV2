@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: data-engine-personal
+    log:
+      path: /root/Documents/output/dataengine
+  config:
+    import: classpath:base.yml,classpath:config.yml

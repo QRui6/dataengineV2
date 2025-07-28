@@ -1,6 +1,5 @@
 package com.urban.carbon.api.user.response.data;
 
-import com.github.houbb.sensitive.annotation.strategy.SensitiveStrategyPhone;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,7 +19,6 @@ public class UserInfo extends BasicUserInfo {
     /**
      * 手机号(进行脱敏处理)
      */
-    @SensitiveStrategyPhone
     private String telephone;
 
     /**

@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: data-engine-auth
+    log:
+      path: /root/Documents/output/dataengine
+  config:
+    import: classpath:base.yml,classpath:cache.yml,classpath:rpc.yml,classpath:sa-token.yml
+
+dubbo:
+  protocol:
+    port: 30005
+  application:
+    qos-port: 20005
+
+server:
+  port: 8086
