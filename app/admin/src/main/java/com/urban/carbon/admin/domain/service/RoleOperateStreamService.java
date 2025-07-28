@@ -1,5 +1,6 @@
 package com.urban.carbon.admin.domain.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.admin.domain.entity.Role;
 import com.urban.carbon.admin.infrasturcture.mapper.OperateStreamMapper;
@@ -22,7 +23,7 @@ public class RoleOperateStreamService extends ServiceImpl<OperateStreamMapper, O
         // 设置操作类型
         stream.setType(type.name());
         // 记录参数
-        stream.setParam(role.toString());
+        stream.setParam(JSON.toJSONString(role));
         // 成功就返回id，失败就返回null
         return save(stream) ? stream.getId() : null;
     }

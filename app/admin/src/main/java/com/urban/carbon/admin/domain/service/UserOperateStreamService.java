@@ -1,5 +1,6 @@
 package com.urban.carbon.admin.domain.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.admin.domain.entity.User;
 import com.urban.carbon.admin.infrasturcture.mapper.OperateStreamMapper;
@@ -22,7 +23,7 @@ public class UserOperateStreamService extends ServiceImpl<OperateStreamMapper, O
         // 设置操作类型
         stream.setType(type.name());
         // 记录参数
-        stream.setParam(user.toString());
+        stream.setParam(JSON.toJSONString(user));
         // 成功就返回id，失败就返回null
         return save(stream) ? stream.getId() : null;
     }
@@ -40,7 +41,7 @@ public class UserOperateStreamService extends ServiceImpl<OperateStreamMapper, O
 
         stream.setParam(userList
                 .stream()
-                .map(User::toString)
+                .map(JSON::toJSONString)
                 .toList()
                 .stream()
                 .reduce((s1, s2) -> s1 + "," + s2)
