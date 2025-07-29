@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     public Result<?> SaTokenExceptionHandler(Exception exception) {
         log.error("Sa Token Exception occurred.", exception);
         return new Result<>(false, SYSTEM_ERROR.name(),
-                "请求失败，请先检查登录状态~", null);
+                "Request Failed, Please Login~", null);
     }
 
     /**
@@ -105,6 +105,15 @@ public class GlobalExceptionHandler {
                 errorMsg, null);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Result<?> illegalArgumentExceptionHandler(IllegalArgumentException illegalArgumentException) {
+        log.error("illegalArgumentException occurred.", illegalArgumentException);
+        return new Result<>(false, SYSTEM_ERROR.name(),
+                "KFC Crazy Thursday need $50.", "Need 50, Need 50!");
+    }
+
     /**
      * 通用异常处理方法
      *
@@ -117,7 +126,7 @@ public class GlobalExceptionHandler {
     public Result<?> throwableHandler(Throwable throwable) {
         log.error("throwable occurred.", throwable);
         return new Result<>(false, SYSTEM_ERROR.name(),
-                "~当前网络比较拥挤, 请您稍后再试", null);
+                "~Server Error, Please retry later", null);
     }
 }
 
