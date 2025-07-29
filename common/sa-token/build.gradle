@@ -1,6 +1,8 @@
 dependencies {
   // Sa Token spring boot 依赖
   api(libs.sa.token.spring.boot3.starter)
+  // 引入 Redisson 配置
+  implementation(project(":common:cache"))
   // Sa Token redis 缓存实现
-  api(libs.sa.token.redis.jackson)
+  api(libs.sa.token.redisson.spring.boot.starter)
 }

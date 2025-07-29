@@ -13,7 +13,8 @@ import java.util.Date;
 /**
  * 用户实体
  *
- * @author bjcug
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Getter
 @Setter

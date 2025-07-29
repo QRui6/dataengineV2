@@ -1,9 +1,15 @@
-package com.urban.carbon.admin.infrasturcture.mapper;
+package com.urban.carbon.admin.infrastructure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.urban.carbon.admin.domain.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * 角色Mapper
+ *
+ * @author XuGaoran
+ * @since 0.0.1
+ */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
 

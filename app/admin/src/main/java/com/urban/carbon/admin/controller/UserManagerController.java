@@ -25,13 +25,27 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 用户管理控制器
+ *
+ * @author XuGaoran
+ * @since 0.0.2
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/userManage")
 public class UserManagerController {
 
+    /**
+     * 用户服务
+     */
     private final UserService userService;
 
+    /**
+     * 构造函数，注入用户服务
+     *
+     * @param userService 用户服务
+     */
     public UserManagerController(UserService userService) {
         this.userService = userService;
     }
@@ -157,6 +171,12 @@ public class UserManagerController {
         return Result.success(response.getData());
     }
 
+    /**
+     * 激活用户
+     *
+     * @param param 用户激活参数
+     * @return 激活结果
+     */
     @PostMapping("/active")
     public Result<UserInfo> activeUser(@RequestBody UserSwitchParam param) {
         String loginId = (String) StpUtil.getLoginId();
@@ -170,6 +190,12 @@ public class UserManagerController {
                 userService.active(userActiveRequest, Long.valueOf(loginId)).getData());
     }
 
+    /**
+     * 冻结用户
+     *
+     * @param param 用户冻结参数
+     * @return 冻结结果
+     */
     @PostMapping("/freeze")
     public Result<UserInfo> freezeUser(@RequestBody UserSwitchParam param) {
         String loginId = (String) StpUtil.getLoginId();
@@ -181,16 +207,28 @@ public class UserManagerController {
                 userService.freeze(param.getUserId(), Long.valueOf(loginId)).getData());
     }
 
+    /**
+     * 解冻用户账户
+     *
+     * @param param 包含用户切换参数的对象，包含要解冻的用户ID
+     * @return 解冻成功后的用户信息，如果解冻失败则返回错误信息
+     */
     @PostMapping("/unfreeze")
     public Result<UserInfo> unfreezeUser(@RequestBody UserSwitchParam param) {
+        // 获取当前登录用户ID
         String loginId = (String) StpUtil.getLoginId();
+
+        // 检查用户状态，确保目标用户处于冻结状态
         UserStateEnum userState = checkUser(loginId, param.getUserId());
         if (userState != UserStateEnum.FROZEN) {
             return Result.error("USER_STATE_ERROR", "当前用户未处于冻结状态");
         }
+
+        // 执行解冻操作并返回结果
         return Result.success(
                 userService.unfreeze(param.getUserId(), Long.valueOf(loginId)).getData());
     }
+
 
     /**
      * 检查用户状态

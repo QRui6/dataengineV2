@@ -14,7 +14,7 @@ dependencies {
   implementation(libs.sa.token.reactor.spring.boot3.starter) {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
   }
-  implementation(libs.sa.token.redis.jackson)
+  implementation(libs.sa.token.redisson.spring.boot.starter)
 
   // load balancer
   implementation(libs.spring.cloud.starter.loadbalancer) {

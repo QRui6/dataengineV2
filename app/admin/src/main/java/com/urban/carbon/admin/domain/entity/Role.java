@@ -12,7 +12,8 @@ import java.util.StringJoiner;
 /**
  * 角色实体
  *
- * @author bjcug
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Getter
 @Setter

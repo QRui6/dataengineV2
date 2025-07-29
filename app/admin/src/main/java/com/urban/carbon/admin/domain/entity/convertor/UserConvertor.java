@@ -16,7 +16,8 @@ import java.util.StringJoiner;
 /**
  * User 与 UserInfo 之间的转换器. 添加 字符串 到 List 的相互转换
  *
- * @author bjcug
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface UserConvertor {
@@ -33,6 +34,7 @@ public interface UserConvertor {
      * @return 转换完成的 UserInfo
      */
     @Mapping(target = "userId", source = "request.id")
+    @Mapping(target = "plainPassword", ignore = true)
     @Mapping(target = "userPermission", source = "request.userPermission", qualifiedByName = "stringToList")
     UserInfo mapToVo(User request);
 
@@ -59,16 +61,6 @@ public interface UserConvertor {
         }
         return Arrays.asList(value.split(","));
     }
-
-    /**
-     * 转换为实体
-     *
-     * @param request 需要转换成的 UserInfo
-     * @return 转换完成之后的对象
-     */
-    @Mapping(target = "id", source = "request.userId")
-    @Mapping(target = "userPermission", source = "request.userPermission", qualifiedByName = "listToString")
-    User mapToEntity(UserInfo request);
 
     /**
      * 将列表使用逗号进行连接

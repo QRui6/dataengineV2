@@ -5,6 +5,9 @@ import lombok.Data;
 
 /**
  * 用户状态切换参数
+ *
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Data
 public class UserSwitchParam {

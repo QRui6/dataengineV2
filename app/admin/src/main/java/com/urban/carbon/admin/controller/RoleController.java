@@ -13,13 +13,27 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 角色控制器
+ *
+ * @author XuGaoran
+ * @since 0.0.2
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/role")
 public class RoleController {
 
+    /**
+     * 角色服务
+     */
     private final RoleService roleService;
 
+    /**
+     * 构造函数，初始化角色服务
+     *
+     * @param roleService 角色服务
+     */
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }

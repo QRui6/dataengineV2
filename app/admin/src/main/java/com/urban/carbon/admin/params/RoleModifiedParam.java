@@ -5,6 +5,12 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 角色修改参数
+ *
+ * @author XuGaoran
+ * @since 0.0.1
+ */
 @Getter
 @Setter
 public class RoleModifiedParam {

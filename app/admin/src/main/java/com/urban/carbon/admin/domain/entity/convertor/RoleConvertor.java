@@ -12,8 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * 角色转换器
+ *
+ * @author XuGaoran
+ * @since 0.0.2
+ */
 @Mapper(nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface RoleConvertor {
+
     /**
      * 使用单例的模式进行使用
      */
@@ -38,16 +45,6 @@ public interface RoleConvertor {
     @Mapping(target = "roleId", source = "request.id")
     @Mapping(target = "permissions", source = "request.rolePermission", qualifiedByName = "stringToList")
     List<RoleInfo> listMapToVo(List<Role> request);
-
-    /**
-     * 转换为实体
-     *
-     * @param request 需要转换成的 RoleInfo
-     * @return 转换完成之后的对象
-     */
-    @Mapping(target = "id", source = "request.roleId")
-    @Mapping(target = "rolePermission", source = "request.permissions", qualifiedByName = "listToString")
-    Role mapToEntity(RoleInfo request);
 
     /**
      * 将数据中的String按照要求进行分割

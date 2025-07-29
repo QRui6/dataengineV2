@@ -7,6 +7,9 @@ import lombok.Data;
 
 /**
  * 用户编辑参数
+ *
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Data
 public class UserUpdateParam {

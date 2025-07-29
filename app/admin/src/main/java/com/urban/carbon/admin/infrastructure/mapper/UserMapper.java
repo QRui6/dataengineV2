@@ -1,4 +1,4 @@
-package com.urban.carbon.admin.infrasturcture.mapper;
+package com.urban.carbon.admin.infrastructure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,6 +9,12 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 用户数据访问接口
+ *
+ * @author XuGaoran
+ * @since 0.0.1
+ */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 

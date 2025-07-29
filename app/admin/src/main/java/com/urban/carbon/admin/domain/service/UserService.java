@@ -15,8 +15,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.urban.carbon.admin.domain.entity.Role;
 import com.urban.carbon.admin.domain.entity.User;
 import com.urban.carbon.admin.domain.entity.convertor.UserConvertor;
-import com.urban.carbon.admin.infrasturcture.mapper.UserMapper;
-import com.urban.carbon.admin.infrasturcture.mapper.RoleMapper;
+import com.urban.carbon.admin.infrastructure.mapper.UserMapper;
+import com.urban.carbon.admin.infrastructure.mapper.RoleMapper;
 import com.urban.carbon.api.admin.constants.UserOperateTypeEnum;
 import com.urban.carbon.api.admin.constants.UserStateEnum;
 import com.urban.carbon.api.admin.exception.RoleErrorCode;
@@ -56,9 +56,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * 用户服务类
+ *
+ * @author XuGaoran
+ * @since 0.0.1
+ */
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> implements InitializingBean {
 
+    /**
+     * 临时图片存储路径
+     */
     private static final String TMP_PHOTO_PATH = System.getProperty("java.io.tmpdir");
 
     /**
@@ -165,27 +174,25 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
      * 实现自 {@link InitializingBean} 接口的初始化方法。
      * <p>
      * 该方法在 Spring 容器完成依赖注入后自动调用，且执行顺序在所有标记了 {@link PostConstruct} 注解的方法之后。
-     * </p>
      * <p>
      * 具体功能如下：
      * <ol>
-     * <li>通过 Redisson 客户端获取名为 "nickName" 的布隆过滤器实例。</li>
-     * <li>检查布隆过滤器是否存在（{@code isExists()}）：</li>
-     * <ul>
-     * <li>如果布隆过滤器已存在，则直接使用。</li>
-     * <li>如果布隆过滤器不存在或尚未初始化，则尝试初始化一个布隆过滤器。</li>
-     * </ul>
-     * <li>布隆过滤器的初始化参数包括：
-     * <ul>
-     * <li>预期插入量：10000（即预计最多存储 10000 个元素）。</li>
-     * <li>误判率：0.01（即允许的最大误判率为 1%）。</li>
-     * </ul>
-     * </li>
+     *  <li>通过 Redisson 客户端获取名为 "nickName" 的布隆过滤器实例。</li>
+     *  <li>检查布隆过滤器是否存在（{@code isExists()}）：</li>
+     *  <ul>
+     *      <li>如果布隆过滤器已存在，则直接使用。</li>
+     *      <li>如果布隆过滤器不存在或尚未初始化，则尝试初始化一个布隆过滤器。</li>
+     *  </ul>
+     *  <li>布隆过滤器的初始化参数包括：
+     *  <ul>
+     *      <li>预期插入量：10000（即预计最多存储 10000 个元素）。</li>
+     *      <li>误判率：0.01（即允许的最大误判率为 1%）。</li>
+     *  </ul>
+     *  </li>
      * </ol>
      * <p>
      * 布隆过滤器的设计目的是高效地判断昵称是否已存在，避免频繁查询底层存储（如数据库）。
      * 它特别适用于需要快速判断元素是否存在的场景，例如用户昵称的唯一性校验。
-     * </p>
      * <p>
      * 执行顺序说明：
      * <ul>
@@ -205,10 +212,8 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     }
 
     /**
-     * <p>
      * 用户注册功能
-     * </p>
-     *
+     * <p>
      * <li>用户注册模块加入了 <strong>分布式锁</strong>，<strong>事务</strong> 的控制</li>
      * <li>在用户注册之后，账户为 INIT 状态， INIT状态的用户需要拥有 <strong>用户管理权限</strong>
      * 的用户进行激活，随后才能进行使用。</li>
@@ -281,12 +286,9 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
     }
 
     /**
-     * <p>
      * 更新用户信息
-     * </p>
      * <p>
      * 与上面激活方法相同, 由于响应速度要求并不严格, 这里使用注解的方式对缓存进行清除
-     * </p>
      *
      * @param userModifyRequest 更新请求
      * @return 用户操作记录
@@ -634,16 +636,12 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
      * 删除用户
      * <p>
      * 该方法首先检查用户是否存在，如果用户不存在则抛出异常。
-     * </p>
      * <p>
      * 使用MyBatisPlus的removeById方法进行逻辑删除，该方法会自动处理@TableLogic注解的字段。
-     * </p>
      * <p>
      * 如果删除失败，则抛出 UserErrorCode.USER_OPERATE_FAILED 异常。
-     * </p>
      * <p>
      * 最后，将删除操作记录到操作表中。
-     * </p>
      *
      * @param userId  用户ID
      * @param loginId 操作人ID
@@ -675,16 +673,12 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
      * 批量删除用户
      * <p>
      * 该方法接收一个用户ID列表，对列表中的每个用户ID执行逻辑删除操作。
-     * </p>
      * <p>
      * 使用MyBatisPlus的removeByIds方法进行批量逻辑删除，该方法会自动处理@TableLogic注解的字段。
-     * </p>
      * <p>
      * 如果删除失败，则抛出 UserErrorCode.USER_OPERATE_FAILED 异常。
-     * </p>
      * <p>
      * 最后，将删除操作记录到操作表中。
-     * </p>
      *
      * @param userIds 用户ID列表
      * @param loginId 操作人ID
@@ -699,7 +693,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements Initia
             return response;
         }
 
-        // 查询所有要删除的用户信息 TODO 多线程操作
+        // 查询所有要删除的用户信息
         List<User> usersToDelete = new ArrayList<>();
         for (Long userId : userIds) {
             User user = userMapper.findById(userId);

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: data-engine-personal
+    name: data-engine-geoservice
     log:
       path: /root/Documents/output/dataengine
   config:

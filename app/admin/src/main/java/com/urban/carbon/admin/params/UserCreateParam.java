@@ -4,6 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+/**
+ * 用户创建参数
+ *
+ * @author XuGaoran
+ * @since 0.0.1
+ */
 @Getter
 @Setter
 @ToString

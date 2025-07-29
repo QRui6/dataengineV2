@@ -1,10 +1,10 @@
 spring:
   application:
-    name: data-engine-upload
+    name: data-engine-data-manager
     log:
       path: /root/Documents/output/dataengine
   config:
-    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:rpc.yml,classpath:datasource.yml,classpath:file.yml
+    import: classpath:base.yml,classpath:cache.yml,classpath:rpc.yml,classpath:datasource.yml,classpath:file.yml,classpath:sa-token.yml
 
 dubbo:
   protocol:

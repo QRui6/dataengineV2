@@ -26,7 +26,7 @@ jline = "3.25.0"
 # spring-cloud = "2025.0.0"
 # spring-cloud-alibaba = "2023.0.3.3"
 # sensitive = "1.7.0"
- spring-web = "6.1.21"
+# spring-web = "6.1.21"
 
 
 [libraries]
@@ -45,7 +45,7 @@ dubbo-spring-boot-starter = { group = "org.apache.dubbo", name = "dubbo-spring-b
 dubbo-registry-nacos = { group = "org.apache.dubbo", name = "dubbo-registry-nacos", version.ref = "dubbo" }
 
 # spring web 相关依赖
- spring-web = { group = "org.springframework", name = "spring-web", version.ref = "spring-web" }
+# spring-web = { group = "org.springframework", name = "spring-web", version.ref = "spring-web" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web", version.ref = "springboot" }
 spring-boot-starter-websocket = { group = "org.springframework.boot", name = "spring-boot-starter-websocket", version.ref = "springboot" }
 
@@ -104,7 +104,8 @@ druid = { group = "com.alibaba", name = "druid", version.ref = "druid" }
 # commons-pool2 = { group = "org.apache.commons", name = "commons-pool2" }
 sa-token-spring-boot3-starter = { group = "cn.dev33", name = "sa-token-spring-boot3-starter", version.ref = "sa-token" }
 sa-token-reactor-spring-boot3-starter = { group = "cn.dev33", name = "sa-token-reactor-spring-boot3-starter", version.ref = "sa-token" }
-sa-token-redis-jackson = { group = "cn.dev33", name = "sa-token-redis-jackson", version.ref = "sa-token" }
+# sa-token-redis-jackson = { group = "cn.dev33", name = "sa-token-redis-jackson", version.ref = "sa-token" }
+sa-token-redisson-spring-boot-starter = { group = "cn.dev33", name = "sa-token-redisson-spring-boot-starter", version.ref = "sa-token" }
 
 # AOP 依赖
 aspectjrt = { group = "org.aspectj", name = "aspectjrt", version.ref = "aop" }

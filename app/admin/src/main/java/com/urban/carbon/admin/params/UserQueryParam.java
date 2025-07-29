@@ -4,6 +4,9 @@ import lombok.Data;
 
 /**
  * 用户查询参数
+ *
+ * @author XuGaoran
+ * @since 0.0.1
  */
 @Data
 public class UserQueryParam {

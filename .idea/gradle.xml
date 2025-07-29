@@ -12,8 +12,6 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/admin" />
-            <option value="$PROJECT_DIR$/app/calculate" />
-            <option value="$PROJECT_DIR$/app/cli" />
             <option value="$PROJECT_DIR$/app/data" />
             <option value="$PROJECT_DIR$/app/data/data-manager" />
             <option value="$PROJECT_DIR$/app/data/data-source" />
