@@ -120,7 +120,7 @@ public class DataSourceService extends ServiceImpl<DataSourceMapper, DataSource>
         return response;
     }
 
-    public OperateResponse<List<Long>> getListOperateResponse(Long loginId, List<DataSource> dsSuccess) {
+    public OperateResponse<List<Long>> deleteBatchDataSource(Long loginId, List<DataSource> dsSuccess) {
         OperateResponse<List<Long>> response = new OperateResponse<>();
         // 写操作记录
         if (!dsSuccess.isEmpty()) {

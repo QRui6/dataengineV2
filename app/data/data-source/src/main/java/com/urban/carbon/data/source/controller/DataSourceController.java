@@ -66,6 +66,7 @@ public class DataSourceController {
     public Result<DataSourceInfo> update(@RequestBody DataSourceModifiedParam dsInfo) {
         String loginId = (String) StpUtil.getLoginId();
         DataSourceModifiedRequest request = new DataSourceModifiedRequest();
+        request.setId(dsInfo.getId());
         request.setDsName(dsInfo.getName());
         request.setDsDesc(dsInfo.getDescription());
         request.setLoginId(Long.valueOf(loginId));

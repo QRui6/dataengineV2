@@ -91,7 +91,7 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
                 condition.getDataSourceIds(), request.getLoginId());
         List<DataSource> dataSources = getDataSources(condition.getDataSourceIds(), dsList);
         // 写删除数据源的操作记录
-        return dataSourceService.getListOperateResponse(request.getLoginId(), dataSources);
+        return dataSourceService.deleteBatchDataSource(request.getLoginId(), dataSources);
     }
 
     @Override
