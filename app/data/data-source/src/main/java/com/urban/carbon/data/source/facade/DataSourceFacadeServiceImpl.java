@@ -1,6 +1,7 @@
 package com.urban.carbon.data.source.facade;
 
 import cn.hutool.core.lang.Assert;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.urban.carbon.api.data.manager.service.DataFacadeService;
 import com.urban.carbon.api.data.source.exception.DataSourceErrorCode;
 import com.urban.carbon.api.data.source.exception.DataSourceException;
@@ -19,7 +20,6 @@ import com.urban.carbon.data.source.domain.entity.DataSource;
 import com.urban.carbon.data.source.domain.entity.convertor.DataSourceConvertor;
 import com.urban.carbon.data.source.domain.service.DataSourceService;
 import com.urban.carbon.rpc.facade.Facade;
-import jodd.util.concurrent.ThreadFactoryBuilder;
 import org.apache.dubbo.config.annotation.DubboService;
 
 import java.util.List;
@@ -119,7 +119,7 @@ public class DataSourceFacadeServiceImpl implements DataSourceFacadeService {
         if (dataSourceIds.size() > 5) {
             // 创建自定义线程池
             ThreadFactory namedThreadFactory = (new ThreadFactoryBuilder())
-                    .setNameFormat("delete-data-%d").get();
+                    .setNameFormat("delete-data-%d").build();
             // 创建线程池并执行并行处理
             try (ExecutorService pool = new ThreadPoolExecutor(
                     5, 5, 0L, TimeUnit.MILLISECONDS,
