@@ -17,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 import static com.urban.carbon.cache.constant.CacheConstant.CACHE_KEY_SEPARATOR;
 
 /**
- * @author bjcug
+ * Token 获取控制器
+ *
+ * @author XuGaoran
  */
 @Slf4j
 @RestController
@@ -43,14 +45,25 @@ public class TokenController {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
+    /**
+     * 获取指定场景的token
+     *
+     * @param scene 场景标识，不能为空
+     * @return 返回包含 tokenKey 的成功结果，或抛出未登录异常
+     */
     @GetMapping("/get")
     public Result<String> get(@NotBlank String scene) {
+        // 检查用户是否已登录
         if (StpUtil.isLogin()) {
+            // 生成随机token并构建tokenKey
             String token = UUID.randomUUID().toString();
             String tokenKey = TOKEN_PREFIX + scene + CACHE_KEY_SEPARATOR + token;
+            // 将token存储到Redis中，有效期30分钟
             stringRedisTemplate.opsForValue().set(tokenKey, token, 30, TimeUnit.MINUTES);
             return Result.success(tokenKey);
         }
+        // 用户未登录时抛出认证异常
         throw new AuthException(AuthErrorCode.USER_NOT_LOGIN);
     }
+
 }
