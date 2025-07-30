@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * 认证相关接口, 主要包含注册与登录两个方法
+ * 认证相关接口
+ * <p>
+ * 主要包含注册与登录两个方法
  *
  * @author bjcug
  */
@@ -58,8 +60,9 @@ public class AuthController {
     }
 
     /**
-     * 登录方法, 需要注意的是, 我们需要判断用户到底是登录还是注册,
-     * 所以这里需要设计一套判断的方法
+     * 登录方法
+     * <p>
+     * 需要注意的是, 我们需要判断用户到底是登录还是注册, 所以这里需要设计一套判断的方法
      *
      * @param loginParam 登录信息
      * @return 结果
@@ -87,8 +90,9 @@ public class AuthController {
     }
 
     /**
-     * 登出方法, 这里登出并没有将redis里面的缓存清除，
-     * 这里只是将cookie清除掉了
+     * 登出方法
+     * <p>
+     * 这里登出并没有将redis里面的缓存清除，这里只是将cookie清除掉了
      *
      * @return 返回成功，这里不会返回 false，同时也没有发现报错
      */
@@ -99,11 +103,13 @@ public class AuthController {
     }
 
     /**
-     * 测试方法，尝试auth模块是否成功启动
+     * 测试方法
+     * <p>
+     * 尝试auth模块是否成功启动
      *
      * @return "test"
      */
-    @RequestMapping("test")
+    @RequestMapping("/test")
     public String test() {
         return "test";
     }

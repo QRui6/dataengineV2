@@ -7,4 +7,5 @@ dependencies {
   implementation(project(":common:cache"))
   implementation(project(":common:sa-token"))
   implementation(project(":common:skywalking"))
+  implementation(project(":common:prometheus"))
 }

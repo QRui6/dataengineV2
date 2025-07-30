@@ -4,7 +4,7 @@ spring:
     log:
       path: /root/Documents/output/dataengine
   config:
-    import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml,classpath:geoserver.yml,classpath:sa-token.yml
+    import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml,classpath:geoserver.yml,classpath:sa-token.yml,classpath:prometheus.yml
 
 dubbo:
   protocol:

@@ -10,4 +10,5 @@ dependencies {
   implementation(project(":common:sa-token"))
   implementation(project(":common:skywalking"))
   implementation(project(":common:web"))
+  implementation(project(":common:prometheus"))
 }
