@@ -157,7 +157,7 @@ public class DataService extends ServiceImpl<DataMapper, Data> {
     public PageResponse<DataInfo> queryDataList(String dataSourceName, Integer page, Integer pageSize, Long dsId) {
         Page<Data> pageResult = this.page(new Page<>(page, pageSize),
                 new QueryWrapper<>(Data.class)
-                        .eq("ds_id", dsId)
+                        .eq("data_source_id", dsId)
                         .orderByDesc("gmt_create")
         );
         List<DataInfo> dataInfos = DataConvertor.INSTANCE.mapToVoList(pageResult.getRecords());
