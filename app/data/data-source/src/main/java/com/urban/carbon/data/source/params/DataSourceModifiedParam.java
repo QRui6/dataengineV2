@@ -28,12 +28,6 @@ public class DataSourceModifiedParam implements Serializable {
     private String name;
 
     /**
-     * 数据源类型
-     */
-    @NotBlank(message = "数据源类型不能为空")
-    private String type;
-
-    /**
      * 数据源描述
      */
     @NotBlank(message = "数据源描述不能为空")

@@ -1,8 +1,6 @@
 package com.urban.carbon.data.source.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.text.StrPool;
-import com.urban.carbon.api.data.source.constants.DataSourceType;
 import com.urban.carbon.api.data.source.request.DataSourceModifiedRequest;
 import com.urban.carbon.api.data.source.request.DataSourcePageQueryRequest;
 import com.urban.carbon.api.data.source.request.DataSourceQueryRequest;
@@ -11,7 +9,6 @@ import com.urban.carbon.api.data.source.service.DataSourceFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.response.QueryResponse;
-import com.urban.carbon.data.source.domain.service.DataSourceService;
 import com.urban.carbon.data.source.params.DataSourceModifiedParam;
 import com.urban.carbon.data.source.vo.DeleteResponseVO;
 import com.urban.carbon.web.util.MultiResultConvertor;
@@ -50,7 +47,6 @@ public class DataSourceController {
         // 构建数据源创建请求对象
         DataSourceModifiedRequest request = new DataSourceModifiedRequest();
         request.setDsName(dsInfo.getName());
-        request.setDsType(DataSourceType.valueOf(dsInfo.getType()));
         request.setDsDesc(dsInfo.getDescription());
         request.setLoginId(Long.valueOf(loginId));
 
@@ -71,7 +67,6 @@ public class DataSourceController {
         String loginId = (String) StpUtil.getLoginId();
         DataSourceModifiedRequest request = new DataSourceModifiedRequest();
         request.setDsName(dsInfo.getName());
-        request.setDsType(DataSourceType.valueOf(dsInfo.getType()));
         request.setDsDesc(dsInfo.getDescription());
         request.setLoginId(Long.valueOf(loginId));
         OperateResponse<DataSourceInfo> response = dataSourceFacadeService.modifyDataSource(request);
