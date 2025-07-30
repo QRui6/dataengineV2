@@ -1,0 +1,9 @@
+com.urban.carbon.api.geoservice.exception.GeoServiceErrorCode
+com.urban.carbon.api.geoservice.exception.GeoServiceException
+com.urban.carbon.api.geoservice.request.GeoServiceModifiedRequest
+com.urban.carbon.api.geoservice.request.GeoServicePageQueryRequest
+com.urban.carbon.api.geoservice.request.GeoServiceQueryRequest
+com.urban.carbon.api.geoservice.request.condition.GeoServiceIdsQueryCondition
+com.urban.carbon.api.geoservice.request.condition.GeoServiceNameQueryCondition
+com.urban.carbon.api.geoservice.request.condition.GeoServiceloginIdQueryCondition
+com.urban.carbon.api.geoservice.response.data.GeoServiceInfo

@@ -17,7 +17,6 @@ import com.urban.carbon.api.admin.response.data.UserInfo;
 import com.urban.carbon.api.admin.service.UserManagerFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.QueryResponse;
-import com.urban.carbon.file.strategy.FileStrategyFactory;
 import com.urban.carbon.rpc.facade.Facade;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.context.annotation.Primary;
