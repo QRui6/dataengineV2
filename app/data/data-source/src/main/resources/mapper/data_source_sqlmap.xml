@@ -16,7 +16,7 @@
     SELECT *
     FROM "public"."data_source"
     WHERE "deleted"=0 AND "ds_user_id"=#{loginId} AND
-    <foreach item="dsId" collection="dsIds" separator="," open="id IN (" close=")">
+    <foreach item="dsId" collection="dataSourceIds" separator="," open="id IN (" close=")">
       #{dsId}
     </foreach>;
 
