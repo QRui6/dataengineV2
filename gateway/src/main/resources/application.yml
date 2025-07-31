@@ -2,7 +2,7 @@ spring:
   application:
     name: data-engine-gateway
   config:
-    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:limiter.yml
+    import: classpath:base.yml,classpath:cache.yml,classpath:config.yml,classpath:limiter.yml,classpath:prometheus.yml
   cloud:
     gateway:
       server:
@@ -53,19 +53,6 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
-  endpoint:
-    prometheus:
-      access: unrestricted
-  prometheus:
-    metrics:
-      export:
-        enabled: true
 
 server:
   port: 8081

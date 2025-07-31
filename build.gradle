@@ -64,39 +64,41 @@ subprojects { subproject ->
   }
 }
 
+// 在文件顶部或适当位置添加
+gradle.startParameter.parallelProjectExecutionEnabled = true
+gradle.startParameter.maxWorkerCount = Runtime.runtime.availableProcessors()
 
-// 定义需要构建的项目
-def parallelModules = [
-  ':app:admin',
-  ':app:data:data-manager',
-  ':app:data:data-source',
-  ':app:geoservice',
-  ':app:personal',
-  ':auth',
-  ':gateway'
-]
-
-// 为每个模块创建单独的构建任务，并行执行
-def buildTasks = parallelModules.collect { module ->
+// 为每个模块创建单独的构建任务
+def buildTasks = [
+    ':app:admin',
+    ':app:data:data-manager',
+    ':app:data:data-source',
+    ':app:geoservice',
+    ':app:personal',
+    ':auth',
+    ':gateway'
+].collect { module ->
   tasks.register("build${module.replace(':', '').capitalize()}", GradleBuild) {
     dir = file(module.replace(':', File.separator))
     tasks = ['build']
-    mustRunAfter = [] // 允许并行执行
+    enabled = true
   }
 }
 
 // 配置并行构建任务依赖
 tasks.register('buildModulesParallel') {
-  description = '并行构建指定模块列表'
+  description = 'build modules parallel'
   group = 'build'
 
   dependsOn buildTasks
 
-  doFirst {
-    println "启动并行构建，模块列表: ${parallelModules}"
-  }
-
   doLast {
-    println "所有模块构建完成"
+    fileTree(rootDir) {
+      include("**/*.jar")
+      exclude("**/*-plain.jar")
+    }.forEach {
+      println "${it.path}, file size: ${it.size() / 1024 / 1024} MB"
+      it.renameTo(file("jarPath\\${it.name}"))
+    }
   }
 }

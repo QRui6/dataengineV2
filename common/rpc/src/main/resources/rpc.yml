@@ -1,14 +1,10 @@
 dubbo:
   consumer:
-#    timeout: 3000
     # 设置不进行检查, 否则如果有应用起不起来, 就会报错导致无法启动
     check: false
-    default:
-      serialization: fastjson2
   protocol:
     name: dubbo
     port: -1
-    serialization: fastjson2
   registry:
     address: nacos://${urban.carbon.nacos.server.url}
     parameters:

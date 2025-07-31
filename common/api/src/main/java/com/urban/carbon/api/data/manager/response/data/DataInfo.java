@@ -31,6 +31,11 @@ public class DataInfo implements Serializable {
     private Long dataSourceId;
 
     /**
+     * 文件大小
+     */
+    private Long fileSize;
+
+    /**
      * 数据源名称
      */
     private String dataSourceName;

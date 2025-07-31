@@ -55,7 +55,12 @@ public class GeoServerHttpUtils {
      */
     private static final String CONTENT_TYPE_JSON = "application/json";
 
-    // 使用构造函数注入依赖
+    /**
+     * 构造函数，初始化 GeoServerHttpUtils 对象
+     *
+     * @param httpClientBuilder HTTP 客户端构建器
+     * @param geoServerProperties GeoServer 配置类
+     */
     public GeoServerHttpUtils(HttpClientBuilder httpClientBuilder,
                               GeoServerProperties geoServerProperties) {
         this.httpClientBuilder = httpClientBuilder;

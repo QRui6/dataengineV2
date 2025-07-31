@@ -7,8 +7,6 @@ spring:
     import: classpath:base.yml,classpath:cache.yml,classpath:datasource.yml,classpath:rpc.yml,classpath:sa-token.yml,classpath:prometheus.yml
 
 dubbo:
-  protocol:
-    port: 30004
   application:
     qos-port: 20004
 
