@@ -15,17 +15,26 @@ import com.urban.carbon.api.geoservice.service.GeoServiceFacadeService;
 import com.urban.carbon.base.response.OperateResponse;
 import com.urban.carbon.base.response.PageResponse;
 import com.urban.carbon.base.response.QueryResponse;
+import com.urban.carbon.file.strategy.FileStrategy;
+import com.urban.carbon.file.strategy.FileStrategyFactory;
 import com.urban.carbon.rpc.facade.Facade;
 import com.urban.carbon.service.domain.entity.GeoService;
 import com.urban.carbon.service.domain.entity.GeoServiceConvertor;
 import com.urban.carbon.service.domain.service.GeoServiceService;
 import org.apache.dubbo.config.annotation.DubboService;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-@DubboService(version = "0.0.1")
+@DubboService(version = "1.0.0")
 public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
+
+    /**
+     * 用于存储需要发布服务的文件的位置
+     */
+    private static final String TMP_PATH = System.getProperty("java.io.tmpdir");
 
     /**
      * GeoServiceService 服务
@@ -38,13 +47,20 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
     private final DataFacadeService dataFacadeService;
 
     /**
+     * 文件策略工厂
+     */
+    private final FileStrategyFactory fileStrategyFactory;
+
+    /**
      * 构造函数
      *
      * @param geoServiceService GeoServiceService 服务
      */
-    public GeoServiceFacadeServiceImpl(GeoServiceService geoServiceService, DataFacadeService dataFacadeService) {
+    public GeoServiceFacadeServiceImpl(GeoServiceService geoServiceService, DataFacadeService dataFacadeService,
+                                       FileStrategyFactory fileStrategyFactory) {
         this.geoServiceService = geoServiceService;
         this.dataFacadeService = dataFacadeService;
+        this.fileStrategyFactory = fileStrategyFactory;
     }
 
     @Override
@@ -53,12 +69,21 @@ public class GeoServiceFacadeServiceImpl implements GeoServiceFacadeService {
         // 校验 request 中提供的数据是否与提供的类型是匹配的
         QueryResponse<DataInfo> fileResponse = dataFacadeService.findById(
                 request.getDataId(), request.getLoginId());
-        // 查看文件后缀
-        String filePath = fileResponse.getData().getFilePath();
+        DataInfo dataInfo = fileResponse.getData();
+        String saveSoft = dataInfo.getSaveSoft();
+        // 将文件下载对应的位置 tmp 目录中
+        String filePath = dataInfo.getFilePath();
+        String fileOnServerPath = Path.of(TMP_PATH, filePath.substring(filePath.lastIndexOf("/"))).toString();
+        FileStrategy strategy = fileStrategyFactory.getStrategy(saveSoft);
+        try {
+            strategy.downloadFile(filePath, new FileOutputStream(fileOnServerPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         // 发布服务
-        GeoService geoService = geoServiceService.publishService(
-                fileResponse.getData(), request.getServiceName(), request.getFormatType(),
-                request.getFormatType(), request.getLoginId());
+        GeoService geoService = geoServiceService.publishService(fileOnServerPath, dataInfo.getDataType(),
+                dataInfo.getDataSourceId(), dataInfo.getId(), request.getServiceName(),
+                request.getFormatType(), request.getServiceDesc(), request.getLoginId());
         OperateResponse<GeoServiceInfo> response = new OperateResponse<>();
         response.setSuccess(true);
         response.setData(GeoServiceConvertor.INSTANCE.mapToVo(geoService));

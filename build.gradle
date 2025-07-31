@@ -95,7 +95,7 @@ tasks.register('buildModulesParallel') {
   doLast {
     fileTree(rootDir) {
       include("**/*.jar")
-      exclude("**/*-plain.jar")
+      exclude("**/*-plain.jar", "jarPath")
     }.forEach {
       println "${it.path}, file size: ${it.size() / 1024 / 1024} MB"
       it.renameTo(file("jarPath\\${it.name}"))

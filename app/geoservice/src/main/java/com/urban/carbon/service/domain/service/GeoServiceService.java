@@ -53,20 +53,20 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
     }
 
     @Transactional
-    public GeoService publishService(DataInfo dataInfo, String serviceName, String allowTypes,
-                                     String serviceDesc, Long loginId) {
-        String filePath = dataInfo.getFilePath();
+    public GeoService publishService(String filePath, String fileType, Long dsId, Long id , String serviceName,
+                                     String allowTypes, String serviceDesc, Long loginId) {
         String storeName = filePath.substring(
                 filePath.lastIndexOf("/") + 1, filePath.length() - 4);
         String workspaceName = geoServerHttpUtils.getGeoServerProperties().getWorkspace();
-        Integer srs = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties().getGeoCode());
-        Integer proj = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties().getGeoProjection());
-        String fileType = dataInfo.getDataType();
+        Integer srs = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties()
+                .getGeoCode().substring(5));
+        Integer proj = Integer.parseInt(geoServerHttpUtils.getGeoServerProperties()
+                .getGeoProjection().substring(5));
         // 调用 GeoServerService 发布对应类型的服务
         try {
             // 1. 创建工作空间（如果不存在）
             geoServerHttpUtils.createWorkspace(workspaceName);
-            switch (fileType) {
+            switch (fileType.toUpperCase()) {
                 case "ZIP":
                 case "SHP":
                     publishShpService(workspaceName, storeName, filePath);
@@ -82,10 +82,11 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
             throw new RuntimeException(e);
         }
         String serviceUrl = RandomNameGenerator.generateRandomURL();
+
         // 将返回的结果封装成 ServiceEntity 写入数据库
         GeoService geoService = new GeoService();
-        geoService.createService(dataInfo.getDataSourceId(), dataInfo.getId(), loginId, 1, srs, proj,
-                workspaceName, storeName, storeName, serviceName, serviceUrl, allowTypes, serviceDesc);
+        geoService.createService(dsId, id, loginId, 1, srs, proj, workspaceName, storeName, storeName,
+                serviceName, serviceUrl, allowTypes, serviceDesc);
         // 记录操作
         if (this.saveOrUpdate(geoService)) {
             long streamResult = geoServiceOperateStreamService.insertStream(
@@ -97,22 +98,22 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
         return null;
     }
 
-    private void publishShpService(String workspaceName, String storeName, String filePath) throws IOException {
+    private void publishShpService(String workspaceName, String storeName, String filePath)
+            throws IOException {
         // 创建矢量数据存储 (Shapefile)
         Assert.notNull(geoServerHttpUtils.createShapefileDataStore(workspaceName, storeName, filePath),
                 () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_SHP_DATASTORE_FAIL));
         // 创建 FeatureType (发布矢量图层服务)
-        geoServerHttpUtils.createFeatureType(workspaceName, storeName, storeName);
         Assert.notNull(geoServerHttpUtils.createFeatureType(workspaceName, storeName, storeName),
                 () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_SHP_LAYER_FAIL));
     }
 
-    private void publishTifService(String workspaceName, String storeName, String filePath) throws IOException {
+    private void publishTifService(String workspaceName, String storeName, String filePath)
+            throws IOException {
         // 创建栅格数据存储 (TIF)
         Assert.notNull(geoServerHttpUtils.createCoverageStore(workspaceName, storeName, filePath),
                 () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_TIF_DATASTORE_FAIL));
         // 创建 Coverage (发布栅格图层服务)
-        geoServerHttpUtils.createCoverage(workspaceName, storeName, storeName);
         Assert.notNull(geoServerHttpUtils.createCoverage(workspaceName, storeName, storeName),
                 () -> new GeoServiceException(GeoServiceErrorCode.PUBLISH_TIF_LAYER_FAIL));
     }

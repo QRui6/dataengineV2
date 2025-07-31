@@ -6,6 +6,7 @@ dependencies {
   implementation(project(":common:config"))
   implementation(project(":common:geoserver"))
   implementation(project(":common:rpc"))
+  implementation(project(":common:file"))
   implementation(project(":common:data-source-config"))
   implementation(project(":common:sa-token"))
   implementation(project(":common:skywalking"))

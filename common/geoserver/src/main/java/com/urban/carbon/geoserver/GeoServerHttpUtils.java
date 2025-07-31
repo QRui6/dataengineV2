@@ -82,6 +82,7 @@ public class GeoServerHttpUtils {
      * 创建工作空间
      *
      * @param workspaceName 工作空间名称
+     * @return 创建的工作空间名称
      */
     public String createWorkspace(String workspaceName) throws IOException {
         String workspaceUrl = geoServerProperties.getRestServiceBaseUrl() + "/workspaces";
@@ -170,6 +171,7 @@ public class GeoServerHttpUtils {
                 "/workspaces/" + workspaceName + "/datastores/" + dataStoreName + "/featuretypes";
         if (resourceExists(featureTypeUrl + "/" + featureTypeName)) {
             log.warn("Shape File Layer {} Already Exists.", featureTypeName);
+            return featureTypeName;
         }
         String resp = postRequest(featureTypeUrl, ACCEPT_TYPE_JSON, CONTENT_TYPE_JSON,
                 new FeatureType(featureTypeName).toString())
@@ -456,7 +458,6 @@ public class GeoServerHttpUtils {
      * @param request     准备执行的HTTP请求对象
      * @return 成功时返回响应的实体内容字符串
      * @throws IOException        如果在执行请求过程中发生I/O错误
-     * @throws GeoServerException 如果响应状态码不在成功范围内，表示请求失败
      */
     private String executeRequest(String resourceUrl, BasicClassicHttpRequest request) throws IOException {
         // 创建并使用一个CloseableHttpClient对象执行请求
@@ -466,14 +467,13 @@ public class GeoServerHttpUtils {
                 // 获取响应状态码
                 int statusCode = response.getCode();
                 // 检查响应状态码是否表示成功
-                if (statusCode >= 200 && statusCode < 300) {
+                if ((statusCode >= 200 && statusCode < 300)) {
                     // 如果成功，返回响应的实体内容作为字符串
                     return EntityUtils.toString(response.getEntity());
                 } else {
                     // 如果不成功，记录错误日志并抛出异常
                     log.error("Url {} Get Unexpected status code: {}", resourceUrl, statusCode);
-                    throw new GeoServerException("检查资源存在性时出错，状态码: " + statusCode,
-                            GeoServerErrorCode.GEOSERVER_REQUEST_FAILED);
+                    return null;
                 }
             });
         }

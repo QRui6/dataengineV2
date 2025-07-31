@@ -9,4 +9,4 @@ dubbo:
     qos-port: 20002
 
 server:
-  port: 8083
+  port: 8084

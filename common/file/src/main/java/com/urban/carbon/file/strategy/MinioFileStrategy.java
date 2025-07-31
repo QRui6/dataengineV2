@@ -196,12 +196,13 @@ public class MinioFileStrategy implements FileStrategy {
             // 验证连接是否有效
             this.minioClient = getMinioClient();
             // 获取文件输入流
-            String basePath = minioProperties.getBasePath();
+            String bucketName = filePath.substring(0, filePath.indexOf("/"));
             // 获取对象名称
-            String objectName = filePath.substring(basePath.length() + 2);
+            String objectName = filePath.substring(
+                    filePath.indexOf("/") + 1);
             try (InputStream inputStream = minioClient.getObject(
                     GetObjectArgs.builder()
-                            .bucket(basePath)
+                            .bucket(bucketName)
                             .object(objectName)
                             .build())) {
                 byte[] buffer = new byte[4096];

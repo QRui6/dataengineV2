@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GeoServiceDubboConfiguration {
 
-    @DubboReference(version = "0.0.1")
+    @DubboReference(version = "1.0.0")
     private GeoServiceFacadeService geoServiceFacadeService;
 
-    @DubboReference(version = "0.0.1")
+    @DubboReference(version = "1.0.0")
     private DataFacadeService dataFacadeService;
 
     @Bean

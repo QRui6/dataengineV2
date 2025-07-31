@@ -2,11 +2,11 @@ spring:
   application:
     name: data-engine-geoservice
   config:
-    import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml,classpath:geoserver.yml,classpath:sa-token.yml,classpath:prometheus.yml
+    import: classpath:base.yml,classpath:datasource.yml,classpath:cache.yml,classpath:rpc.yml,classpath:file.yml,classpath:geoserver.yml,classpath:sa-token.yml,classpath:prometheus.yml
 
 dubbo:
   application:
     qos-port: 20003
 
 server:
-  port: 8084
+  port: 8085
