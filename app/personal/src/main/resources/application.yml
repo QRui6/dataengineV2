@@ -1,8 +1,6 @@
 spring:
   application:
     name: data-engine-personal
-    log:
-      path: /root/Documents/output/dataengine
   config:
     import: classpath:base.yml,classpath:cache.yml,classpath:datasource.yml,classpath:rpc.yml,classpath:sa-token.yml,classpath:prometheus.yml
 
