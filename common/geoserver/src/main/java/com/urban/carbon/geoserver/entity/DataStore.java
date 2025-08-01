@@ -61,7 +61,7 @@ public class DataStore implements Serializable {
                                     String enableSpatialIndex, String memoryMappedBuffer, String timeZone) {
             entries = new ArrayList<>();
             // 需要 url 属性，必需
-            entries.add(new Entry("url", url));
+            entries.add(new Entry("url", "file:" + url));
             // 添加 cache and reuse memory maps 属性
             insertList("cache and reuse memory maps", cacheReuseMemoryMaps, "true");
             // 添加文件的类型

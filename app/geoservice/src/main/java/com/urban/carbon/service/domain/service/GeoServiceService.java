@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.urban.carbon.api.data.manager.response.data.DataInfo;
 import com.urban.carbon.api.geoservice.constants.GeoServiceOperateType;
 import com.urban.carbon.api.geoservice.exception.GeoServiceErrorCode;
 import com.urban.carbon.api.geoservice.exception.GeoServiceException;
@@ -13,6 +12,7 @@ import com.urban.carbon.base.utils.RandomNameGenerator;
 import com.urban.carbon.geoserver.GeoServerHttpUtils;
 import com.urban.carbon.service.domain.entity.GeoService;
 import com.urban.carbon.service.infrastructure.mapper.GeoServiceMapper;
+import com.urban.carbon.web.util.ZipUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +68,7 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
             geoServerHttpUtils.createWorkspace(workspaceName);
             switch (fileType.toUpperCase()) {
                 case "ZIP":
+                    filePath = ZipUtils.dealZipFile(filePath, storeName);
                 case "SHP":
                     publishShpService(workspaceName, storeName, filePath);
                     break;
@@ -86,7 +87,8 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
         // 将返回的结果封装成 ServiceEntity 写入数据库
         GeoService geoService = new GeoService();
         geoService.createService(dsId, id, loginId, 1, srs, proj, workspaceName, storeName, storeName,
-                serviceName, serviceUrl, allowTypes, serviceDesc);
+                serviceName, serviceUrl, allowTypes, serviceDesc,
+                geoServerHttpUtils.getGeoServerProperties().getWmsServiceBaseUrl());
         // 记录操作
         if (this.saveOrUpdate(geoService)) {
             long streamResult = geoServiceOperateStreamService.insertStream(
@@ -190,6 +192,7 @@ public class GeoServiceService extends ServiceImpl<GeoServiceMapper, GeoService>
         String[] splitString = geoService.getServiceUrl().split("/");
         Assert.isTrue(splitString[splitString.length - 1].equals(serviceMd5),
                 () -> new GeoServiceException(GeoServiceErrorCode.SERVICE_NOT_MATCH));
+        geoService.setServiceBaseURL(geoServerHttpUtils.getGeoServerProperties().getWmsServiceBaseUrl());
         return geoService;
     }
 }

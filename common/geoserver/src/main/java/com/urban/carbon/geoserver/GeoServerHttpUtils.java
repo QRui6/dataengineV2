@@ -174,11 +174,7 @@ public class GeoServerHttpUtils {
             return featureTypeName;
         }
         String resp = postRequest(featureTypeUrl, ACCEPT_TYPE_JSON, CONTENT_TYPE_JSON,
-                new FeatureType(featureTypeName).toString())
-                .replace("\n", "").trim();
-        if (resp.isBlank()) {
-            throw new GeoServerException(GeoServerErrorCode.FEATURE_TYPE_CREATE_FAILED);
-        }
+                new FeatureType(featureTypeName).toString());
         log.info("Create FeatureType {} Success.", featureTypeName);
         return resp;
     }

@@ -10,7 +10,9 @@ public enum GeoServiceFileType {
 
     TIF("TIF",List.of("image/png", "image/jpeg", "image/jpg")),
 
-    SHP("SHP", List.of("image/png", "image/jpeg", "image/jpg"));
+    SHP("SHP", List.of("image/png", "image/jpeg", "image/jpg")),
+
+    ZIP("ZIP", List.of("image/png", "image/jpeg", "image/jpg"));
 
     private final String name;
 

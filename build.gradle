@@ -98,7 +98,7 @@ tasks.register('buildModulesParallel') {
       exclude("**/*-plain.jar", "jarPath")
     }.forEach {
       println "${it.path}, file size: ${it.size() / 1024 / 1024} MB"
-      it.renameTo(file("jarPath\\${it.name}"))
+      it.renameTo(file("D:\\workspace\\work\\NPP-system\\jarPath\\${it.name}"))
     }
   }
 }

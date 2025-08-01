@@ -1,5 +1,6 @@
 package com.urban.carbon.service.domain.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.urban.carbon.data.entity.BaseEntity;
 import lombok.*;
@@ -65,12 +66,12 @@ public class GeoService extends BaseEntity {
     private String serviceName;
 
     /**
-     * 服务URL，这里是随机生成的32位随机数
+     * 服务URL，这里是随机生成的 32 位随机数
      */
     private String serviceUrl;
 
     /**
-     * 允许访问的类型，默认为all
+     * 允许访问的类型，默认为 all
      */
     private String allowTypes;
 
@@ -79,10 +80,17 @@ public class GeoService extends BaseEntity {
      */
     private String serviceDesc;
 
+    /**
+     * 服务基础 URL
+     */
+    @TableField(exist = false)
+    private String serviceBaseURL;
+
     public void createService(Long dsId, Long dataId, Long userId, Integer started,
                               Integer serviceSrs, Integer serviceProj, String workspace,
                               String storeName, String layerName, String serviceName,
-                              String serviceUrl, String allowTypes, String serviceDesc) {
+                              String serviceUrl, String allowTypes, String serviceDesc,
+                              String baseUrl) {
         this.dsId = dsId;
         this.dataId = dataId;
         this.userId = userId;
@@ -96,5 +104,6 @@ public class GeoService extends BaseEntity {
         this.serviceUrl = serviceUrl;
         this.allowTypes = allowTypes;
         this.serviceDesc = serviceDesc;
+        this.serviceBaseURL = baseUrl;
     }
 }

@@ -17,7 +17,7 @@ spring:
     # 投影坐标系
     geoProjection: ${urban.carbon.geo-server.geoProjection}
     # WMS 服务的 URL 地址
-    wmsServiceBaseUrl: ${urban.carbon.geo-server.baseUrl}/${urban.carbon.geo-server-workspace}/wms
+    wmsServiceBaseUrl: ${urban.carbon.geo-server.baseUrl}/${urban.carbon.geo-server.workspace}/wms
     # rest 服务的 URL 地址
     restServiceBaseUrl: ${urban.carbon.geo-server.baseUrl}/rest
 

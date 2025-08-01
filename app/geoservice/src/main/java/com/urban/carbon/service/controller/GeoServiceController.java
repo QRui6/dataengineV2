@@ -52,6 +52,7 @@ public class GeoServiceController {
         }
         request.setCurrentPage(currentPage);
         request.setPageSize(pageSize);
+        request.setLoginId(Long.valueOf(loginId));
         PageResponse<GeoServiceInfo> response = geoServiceFacadeService.pageQueryService(request);
         return MultiResultConvertor.convert(response);
     }

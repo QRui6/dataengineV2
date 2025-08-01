@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -15,6 +16,26 @@ public class GeoServiceInfo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 服务ID
+     */
+    private Long id;
+
+    /**
+     * 服务名称
+     */
+    private String serviceName;
+
+    /**
+     * 服务描述
+     */
+    private String serviceDesc;
+
+    /**
+     * 创建时间
+     */
+    private Date gmtCreate;
 
     /**
      * 工作空间名称
@@ -32,6 +53,16 @@ public class GeoServiceInfo implements Serializable {
     private String layerName;
 
     /**
+     * 服务状态
+     */
+    private Integer started;
+
+    /**
+     * 服务基础URL
+     */
+    private String serviceBaseURL;
+
+    /**
      * 允许的格式
      */
     private List<String> allowFormatTypes;
@@ -47,30 +78,7 @@ public class GeoServiceInfo implements Serializable {
     private String projection;
 
     /**
-     *
+     * 服务ID
      */
-    private String baseUrl;
-
-    /**
-     * 创建工作空间
-     *
-     * @param workspaceName 工作空间名称
-     * @param storeName 存储名称
-     * @param layerName 图层名称
-     * @param allowFormatTypes 允许的格式
-     * @param SRS 地理坐标系
-     * @param projection 投影坐标系
-     * @param baseUrl 基础URL
-     */
-    public void showInfo(String workspaceName, String storeName, String layerName,
-                         List<String> allowFormatTypes, Integer SRS,
-                         Integer projection, String baseUrl) {
-        this.setWorkspaceName(workspaceName);
-        this.setStoreName(storeName);
-        this.setLayerName(layerName);
-        this.setAllowFormatTypes(allowFormatTypes);
-        this.setSRS("EPSG:" + SRS);
-        this.setProjection("EPSG:" + projection);
-        this.setBaseUrl(baseUrl);
-    }
+    private String serviceUrl;
 }

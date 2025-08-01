@@ -28,7 +28,6 @@ public interface GeoServiceConvertor {
     @Mapping(source = "geoService.allowTypes", target = "allowFormatTypes", qualifiedByName = "stringToList")
     @Mapping(source = "geoService.serviceSrs", target = "SRS")
     @Mapping(source = "geoService.serviceProj", target = "projection")
-    @Mapping(source = "geoService.serviceUrl", target = "baseUrl")
     GeoServiceInfo mapToVo(GeoService geoService);
 
     /**
@@ -41,7 +40,6 @@ public interface GeoServiceConvertor {
     @Mapping(source = "geoService.allowTypes", target = "allowFormatTypes", qualifiedByName = "stringToList")
     @Mapping(source = "geoService.serviceSrs", target = "SRS")
     @Mapping(source = "geoService.serviceProj", target = "projection")
-    @Mapping(source = "geoService.serviceUrl", target = "baseUrl")
     List<GeoServiceInfo> mapToList(List<GeoService> geoServices);
 
     /**
