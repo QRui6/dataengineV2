@@ -4,16 +4,22 @@
 
   <springProperty scope="context" name="app.name" source="spring.application.name"/>
 
+  <!-- 添加 SkyWalking 的 TraceId 转换器 -->
+  <conversionRule conversionWord="tid"
+                  converterClass="org.apache.skywalking.apm.toolkit.log.logback.v1.x.LogbackPatternConverter"/>
+
   <!-- 处理log文件的位置-->
   <property name="APP_NAME" value="${app.name}"/>
   <property name="LOG_PATH" value="/root/logs/${APP_NAME}"/>
   <property name="LOG_FILE" value="${LOG_PATH}/application.log"/>
-  <property name="LOG_PATTERN" value="%d [%thread] %-5level %logger - %msg%n"/>
+  <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] %-5level [%thread] %logger{36} - %msg%n"/>
 
   <appender name="APPLICATION" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${LOG_FILE}</file>
-    <encoder>
-      <pattern>${LOG_PATTERN}</pattern>
+    <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+      <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+        <Pattern>${FILE_LOG_PATTERN}</Pattern>
+      </layout>
     </encoder>
     <!-- 文件生成的策略 -->
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -35,9 +41,9 @@
   <!-- 添加异步 appender，提高性能 -->
   <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
     <discardingThreshold>20</discardingThreshold>
-    <queueSize>1024</queueSize>
-    <includeCallerData>true</includeCallerData>
+    <queueSize>2048</queueSize>
     <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
     <appender-ref ref="APPLICATION"/>
   </appender>
 
