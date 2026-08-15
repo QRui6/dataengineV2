@@ -2,31 +2,31 @@ urban:
   carbon:
     # PostGreSQL 数据库配置
     postgresql:
-      url: "jdbc:postgresql://121.194.93.38:5432/ucarbon"
-      username: "postgres"
-      password: "jcf0326_103"
+      url: "jdbc:postgresql://${DATAENGINE_DB_HOST:localhost}:${DATAENGINE_DB_PORT:5432}/${DATAENGINE_DB_NAME:ucarbon}"
+      username: "${DATAENGINE_DB_USER:postgres}"
+      password: "${DATAENGINE_DB_PASSWORD:}"
     # Redis 缓存配置
     redis:
-      url: "121.194.93.38"
-      port: 6379
-      password: "jcf0326_103"
+      url: "${DATAENGINE_REDIS_HOST:localhost}"
+      port: ${DATAENGINE_REDIS_PORT:6379}
+      password: "${DATAENGINE_REDIS_PASSWORD:}"
     # Nacos 注册中心配置
     nacos:
       server:
-        url: "121.194.93.38:8848"
+        url: "${DATAENGINE_NACOS_URL:localhost:8848}"
     # Dubbo 服务配置
     dubbo:
       nacos:
-        namespace: "a024fe51-1bde-4ff4-8004-fcd06a5b9d8b"
+        namespace: "${DATAENGINE_DUBBO_NAMESPACE:}"
         group: "dubbo"
       redis:
-        url: "121.194.93.38"
-        port: 6379
-        password: "jcf0326_103"
+        url: "${DATAENGINE_REDIS_HOST:localhost}"
+        port: ${DATAENGINE_REDIS_PORT:6379}
+        password: "${DATAENGINE_REDIS_PASSWORD:}"
     # Sentinel 限流组件的配置
     sentinel:
-      url: "121.194.93.38"
-      port: 8090
+      url: "${DATAENGINE_SENTINEL_HOST:localhost}"
+      port: ${DATAENGINE_SENTINEL_PORT:8090}
       nacos:
         data-id: "data-engine-gateway-sentinel"
     # 文件存储的配置
@@ -52,16 +52,16 @@ urban:
       hdfs:
         enabled: true
         basePath: "/data"
-        hdfsHost: "121.194.93.38"
-        hdfsPort: 8020
-        hdfsUser: "root"
+        hdfsHost: "${DATAENGINE_HDFS_HOST:localhost}"
+        hdfsPort: ${DATAENGINE_HDFS_PORT:8020}
+        hdfsUser: "${DATAENGINE_HDFS_USER:root}"
       minio:
         enabled: true
         basePath: "data"
-        host: "121.194.93.61"
-        port: 9000
-        user: "admin"
-        password: "jcf0326_103"
+        host: "${DATAENGINE_MINIO_HOST:localhost}"
+        port: ${DATAENGINE_MINIO_PORT:9000}
+        user: "${DATAENGINE_MINIO_USER:admin}"
+        password: "${DATAENGINE_MINIO_PASSWORD:}"
     # HTTP 连接池配置
     http-pool:
       defaultMaxPerRoute: 2
@@ -74,9 +74,9 @@ urban:
     # GeoServer 配置
     geo-server:
       enabled: true
-      baseUrl: "http://121.194.93.45:5000/geoserver"
-      userName: "admin"
-      password: "geoserver"
+      baseUrl: "${DATAENGINE_GEOSERVER_URL:http://localhost:5000/geoserver}"
+      userName: "${DATAENGINE_GEOSERVER_USER:admin}"
+      password: "${DATAENGINE_GEOSERVER_PASSWORD:}"
       workspace: "urban"
       BaseStoreName: "carbon"
       geoCode: "EPSG:4326"

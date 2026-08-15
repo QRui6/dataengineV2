@@ -75,23 +75,19 @@ subprojects { subproject ->
 gradle.startParameter.parallelProjectExecutionEnabled = true
 gradle.startParameter.maxWorkerCount = Runtime.runtime.availableProcessors()
 
-// 配置 ssh 远程连接 （基于代理服务器）
-//remotes {
-//  k8sworker2 {
-//    host = "8.130.46.220"
-//    port = 4003
-//    user = "root"
-//    identity = file("C:\\Users\\bjcug\\.ssh\\id_ed25519")
-//  }
-//}
+// 历史部署方式：基于代理服务器 SSH 上传（已废弃，勿再使用）
 
 // 配置 ssh 远程连接 （基于 SSH 代理）
+// 注意：部署目标服务器信息属于敏感配置，请勿提交到代码仓库。
+// 如需启用自动部署，请在本地环境变量或 Gradle 用户目录中配置，例如：
+//   host = System.getenv("DEPLOY_HOST")
+//   identity = file(System.getenv("DEPLOY_KEY_PATH"))
 remotes {
   k8sworker2 {
-    host = "121.194.93.45"
+    host = System.getenv("DATAENGINE_DEPLOY_HOST") ?: "localhost"
     port = 22
     user = "root"
-    identity = file("C:\\Users\\bjcug\\.ssh\\id_ed25519")
+    identity = file(System.getenv("DATAENGINE_DEPLOY_KEY_PATH") ?: "${System.getProperty("user.home")}/.ssh/id_ed25519")
   }
 }
 
