@@ -163,9 +163,3 @@ java -jar app/personal/build/libs/*.jar
 
 - 支持 Gradle SSH 插件自动化部署：`gradle buildModulesParallel` 构建完成后自动将各模块 jar 上传至目标服务器
 - 生产环境部署于 Kubernetes 集群（worker 节点运行服务实例）
-
-## 版权与致谢
-
-- 本项目为**团队协作开发**，版权归原作者团队所有，代码遵循仓库内 LICENSE（MIT No Attribution）
-- 基础框架与基础设施（网关、RPC、缓存、认证等公共组件）由团队搭建
-- 若使用本项目代码，请遵守 LICENSE 条款
